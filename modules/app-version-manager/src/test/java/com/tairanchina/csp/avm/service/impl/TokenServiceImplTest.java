@@ -1,7 +1,7 @@
 package com.tairanchina.csp.avm.service.impl;
 
 import com.tairanchina.csp.avm.dto.JWTSubject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by hzlizx on 2019/2/21

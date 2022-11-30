@@ -243,8 +243,8 @@ export default {
             });
 
             if (response.data.code === 200) {
-                this.tableList = response.data.data.records;
-                this.total = response.data.data.total;
+                this.tableList = response.data.data.content;
+                this.total = response.data.data.totalElements;
             } else {
                 this.total = 0;
                 this.tableList = [];
@@ -344,7 +344,7 @@ export default {
                 }
             });
             if (response.data.code === 200) {
-                this.appList = response.data.data.records;
+                this.appList = response.data.data.content;
             }
         },
         searchLogs () {

@@ -11,8 +11,10 @@ import com.tairanchina.csp.avm.annotation.OperationRecord;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.IosVersionService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
+import io.mybatis.mapper.example.Example;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -31,37 +33,38 @@ public class IosController {
     @Autowired
     private BasicService basicService;
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
-            @ApiImplicitParam(name = "page", value = "页数", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示数据条数", defaultValue = "10"),
-            @ApiImplicitParam(name = "appVersion", value = "版本号"),
-            @ApiImplicitParam(name = "updateType", value = "更新类型，0：强制更新 1：一般更新 2：静默更新 3：可忽略更新 4：静默可忽略更新"),
-            @ApiImplicitParam(name = "versionStatus", value = "上架状态，0-未上架；1-已上架"),})
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
+        @Parameter(name = "page", description = "页数", example = "1"),
+        @Parameter(name = "pageSize", description = "每页显示数据条数", example = "10"),
+        @Parameter(name = "appVersion", description = "版本号"),
+        @Parameter(name = "updateType", description = "更新类型，0：强制更新 1：一般更新 2：静默更新 3：可忽略更新 4：静默可忽略更新"),
+        @Parameter(name = "versionStatus", description = "上架状态，0-未上架；1-已上架"),})
     @GetMapping
     public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false, defaultValue = "") String appVersion,
                               @RequestParam(required = false, defaultValue = "") Integer updateType,
                               @RequestParam(required = false, defaultValue = "") Integer versionStatus) {
-        ExtWrapper<IosVersion> wrapper = new ExtWrapper<>();
-        wrapper.and().eq("app_id", ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        wrapper.and().eq("del_flag", 0);
-        wrapper.setVersionSort("app_version", false);
+        Example<IosVersion> example = new Example<>();
+        final Example.Criteria<IosVersion> wrapper = example.createCriteria();
+        wrapper.andEqualTo(IosVersion::getAppId, ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
+        wrapper.andEqualTo(IosVersion::getDelFlag, 0);
+        ExtWrapper.orderByVersion(example, "app_version");
         if (StringUtils.hasLength(appVersion)) {
-            wrapper.andNew().like("app_version", "%" + appVersion + "%");
+            wrapper.andLike(IosVersion::getAppVersion, "%" + appVersion + "%");
         }
         if (updateType != null) {
-            wrapper.and().eq("update_type", updateType);
+            wrapper.andEqualTo(IosVersion::getUpdateType, updateType);
         }
         if (versionStatus != null) {
-            wrapper.and().eq("version_status", versionStatus);
+            wrapper.andEqualTo(IosVersion::getVersionStatus, versionStatus);
         }
-        return iosVersionService.listSort(page, pageSize, wrapper);
+        return iosVersionService.listSort(page, pageSize, example);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PostMapping
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.CREATE_IOS_VERSION)
@@ -94,8 +97,8 @@ public class IosController {
         return iosVersionService.create(iosVersion);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PutMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.UPDATE_IOS_VERSION)
@@ -117,8 +120,8 @@ public class IosController {
         return iosVersionService.update(iosVersion);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.DELETE_IOS_VERSION)
@@ -129,16 +132,16 @@ public class IosController {
         return iosVersionService.delete(id);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/versions")
     public ServiceResult versions() {
         return iosVersionService.listAllVersion();
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{id}")
     public ServiceResult get(@PathVariable int id) {
@@ -148,8 +151,8 @@ public class IosController {
         return iosVersionService.get(id);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PutMapping("/{id}/delivery")
     @OperationRecord(type = OperationRecordLog.OperationType.DELIVERY, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.DELIVERY_IOS_VERSION)
@@ -157,8 +160,8 @@ public class IosController {
         return iosVersionService.delivery(id);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PutMapping("/{id}/undelivery")
     @OperationRecord(type = OperationRecordLog.OperationType.UNDELIVERY, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.UNDELIVERY_IOS_VERSION)

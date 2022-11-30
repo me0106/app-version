@@ -1,10 +1,15 @@
 package com.tairanchina.csp.avm.mq;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.function.Consumer;
+
 import com.dingtalk.chatbot.DingtalkChatbotClient;
 import com.dingtalk.chatbot.SendResult;
 import com.dingtalk.chatbot.message.MarkdownMessage;
 import com.dingtalk.chatbot.message.TextMessage;
-import com.ecfront.dew.common.$;
+import com.tairanchina.csp.avm.common.Json;
 import com.tairanchina.csp.avm.entity.App;
 import com.tairanchina.csp.avm.entity.User;
 import com.tairanchina.csp.avm.mapper.AppMapper;
@@ -13,11 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.function.Consumer;
 
 /**
  * ChatBot发送端
@@ -38,13 +38,13 @@ public class ChatBotSender implements Consumer<String> {
 
     @Override
     public void accept(String s) {
-        ChatBotMQEvent chatBotMQEvent = $.json.toObject(s, ChatBotMQEvent.class);
+        ChatBotMQEvent chatBotMQEvent = Json.toObject(s, ChatBotMQEvent.class);
         logger.info("接受到机器人消息发送事件：" + chatBotMQEvent.toString());
         App app = appMapper.selectById(chatBotMQEvent.getAppId());
 
         User user = new User();
         user.setUserId(chatBotMQEvent.getTriggeredBy());
-        User userInDb = userMapper.selectOne(user);
+        User userInDb = userMapper.selectOne(user).orElse(null);
         if (app != null && userInDb != null) {
             try {
                 if("MARKDOWN".equalsIgnoreCase(chatBotMQEvent.getType())){
@@ -71,6 +71,6 @@ public class ChatBotSender implements Consumer<String> {
     }
 
     private void printResult(SendResult sendResult){
-        logger.info("ChatBot send result : {}", $.json.toJsonString(sendResult));
+        logger.info("ChatBot send result : {}", Json.toJsonString(sendResult));
     }
 }

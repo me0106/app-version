@@ -1,9 +1,8 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.ecfront.dew.common.$;
-import com.tairanchina.csp.avm.constants.RedisKey;
+import java.util.HashMap;
+import java.util.List;
+
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.ApkExt;
 import com.tairanchina.csp.avm.dto.ServiceResult;
@@ -16,17 +15,13 @@ import com.tairanchina.csp.avm.mapper.ChannelMapper;
 import com.tairanchina.csp.avm.service.ApkService;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
-import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.cluster.ClusterLock;
+import io.mybatis.mapper.example.Example;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by hzlizx on 2018/6/14 0014
@@ -52,73 +47,41 @@ public class ApkServiceImpl implements ApkService {
         apk.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         apk.setId(null);
         apk.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
-
-        EntityWrapper<Apk> apkEntityWrapper = new EntityWrapper<>();
-        apkEntityWrapper.and().eq("channel_id", apk.getChannelId());
-        apkEntityWrapper.and().eq("app_id", apk.getAppId());
-        apkEntityWrapper.and().eq("version_id", apk.getVersionId());
-        apkEntityWrapper.and().eq("del_flag", 0);
-
-        ClusterLock lock = Dew.cluster.lock.instance(RedisKey.APP_LOCK + ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        try {
-            if (lock.tryLock(5000)) {
-                if (!apkMapper.selectList(apkEntityWrapper).isEmpty()) {
-                    return ServiceResultConstants.APK_EXISTS;
-                }
-
-                Integer insert = apkMapper.insert(apk);
-                if (insert > 0) {
-                    return ServiceResult.ok(apk);
-                } else {
-                    return ServiceResultConstants.DB_ERROR;
-                }
-            }
-            return ServiceResultConstants.ERROR_500;
-        } catch (InterruptedException e) {
-            logger.error("加锁失败", e);
-            Thread.currentThread().interrupt();
-            return ServiceResultConstants.ERROR_500;
-        } finally {
-            lock.unLock();
+        if (!apkMapper.wrapper()
+            .eq(Apk::getChannelId, apk.getChannelId())
+            .eq(Apk::getAppId, apk.getAppId())
+            .eq(Apk::getVersionId, apk.getVersionId())
+            .eq(Apk::getDelFlag, 0)
+            .list().isEmpty()) {
+            return ServiceResultConstants.APK_EXISTS;
+        }
+        int insert = apkMapper.insert(apk);
+        if (insert > 0) {
+            return ServiceResult.ok(apk);
+        } else {
+            return ServiceResultConstants.DB_ERROR;
         }
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, EntityWrapper<Apk> wrapper, int versionId) {
+    public ServiceResult list(int page, int pageSize, Example<Apk> wrapper, int versionId) {
         AndroidVersion androidVersion = androidVersionMapper.selectById(versionId);
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
         }
-        Page<Apk> apkPage = new Page<>();
-        apkPage.setCurrent(page);
-        apkPage.setSize(pageSize);
-        apkPage.setRecords(apkMapper.selectPage(apkPage, wrapper));
-        basicService.formatCreatedBy(apkPage.getRecords());
-        List<ApkExt> collect = apkPage.getRecords().stream().map(mapper -> {
-            ApkExt ext = new ApkExt();
-            try {
-                $.bean.copyProperties(ext, mapper);
-                Channel channel = channelMapper.selectById(mapper.getChannelId());
-                if (channel != null) {
-                    ext.setChannelCode(channel.getChannelCode());
-                }
-                ext.setVersion(androidVersion.getAppVersion());
-                return ext;
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                logger.error("Apk参数转换出错", e);
+        final Page<Apk> apks = apkMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
+        basicService.formatCreatedBy(apks);
+        Page<ApkExt> collect = apks.map(apk -> {
+            ApkExt ext = new ApkExt(apk);
+            Channel channel = channelMapper.selectById(apk.getChannelId());
+            if (channel != null) {
+                ext.setChannelCode(channel.getChannelCode());
             }
-            return null;
-        }).collect(Collectors.toList());
+            ext.setVersion(androidVersion.getAppVersion());
+            return ext;
+        });
+        return ServiceResult.ok(collect);
 
-        Page<ApkExt> apkExtPage = new Page<>();
-        try {
-            $.bean.copyProperties(apkExtPage, apkPage);
-            apkExtPage.setRecords(collect);
-            return ServiceResult.ok(apkExtPage);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            logger.error("Apk参数转换出错", e);
-        }
-        return ServiceResultConstants.DB_ERROR;
     }
 
     @Override
@@ -132,7 +95,7 @@ public class ApkServiceImpl implements ApkService {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         apk.setDeliveryStatus(1);
-        Integer integer = apkMapper.updateById(apk);
+        int integer = apkMapper.updateById(apk);
         if (integer > 0) {
             return ServiceResult.ok(apk);
         } else {
@@ -151,7 +114,7 @@ public class ApkServiceImpl implements ApkService {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         apk.setDeliveryStatus(0);
-        Integer integer = apkMapper.updateById(apk);
+        int integer = apkMapper.updateById(apk);
         if (integer > 0) {
             return ServiceResult.ok(apk);
         } else {
@@ -169,7 +132,7 @@ public class ApkServiceImpl implements ApkService {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         apk.setDelFlag(1);
-        Integer integer = apkMapper.updateById(apk);
+        int integer = apkMapper.updateById(apk);
         if (integer > 0) {
             return ServiceResult.ok(apk);
         } else {
@@ -179,15 +142,11 @@ public class ApkServiceImpl implements ApkService {
 
     @Override
     public ServiceResult exists(String channelCode, int versionId) {
-        Channel channel = new Channel();
-        channel.setChannelCode(channelCode);
-        channel.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        channel.setDelFlag(0);
-
-        EntityWrapper<Channel> wrapper = new EntityWrapper<>(channel);
-
-        wrapper.last("limit 0,1");
-        List<Channel> channels = channelMapper.selectList(wrapper);
+        List<Channel> channels = channelMapper.wrapper().eq(Channel::getChannelCode, channelCode)
+            .eq(Channel::getAppId, ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())
+            .eq(Channel::getDelFlag, 0)
+            .endSql("LIMIT 1")
+            .list();
         if (channels.isEmpty()) {
             return ServiceResultConstants.CHANNEL_NOT_EXISTS;
         }
@@ -195,14 +154,10 @@ public class ApkServiceImpl implements ApkService {
         if (channelSelected.getChannelStatus() != 1) {
             return ServiceResultConstants.CHANNEL_STATUS_2_3;
         }
-        Apk apk = new Apk();
-        apk.setChannelId(channelSelected.getId());
-        apk.setVersionId(versionId);
-        apk.setDelFlag(0);
-        apk.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        EntityWrapper<Apk> apkEntityWrapper = new EntityWrapper<>(apk);
-        apkEntityWrapper.last("limit 0,1");
-        List<Apk> apks = apkMapper.selectList(apkEntityWrapper);
+        List<Apk> apks = apkMapper.wrapper().eq(Apk::getChannelId, channelSelected.getId())
+            .eq(Apk::getVersionId, versionId)
+            .eq(Apk::getDelFlag, 0)
+            .eq(Apk::getAppId, ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId()).endSql("LIMIT 1").list();
         HashMap<String, Object> map = new HashMap<>();
         String message = "APK不存在";
         if (apks.isEmpty()) {
@@ -222,11 +177,8 @@ public class ApkServiceImpl implements ApkService {
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
         }
-        Page<ApkExt> apkPage = new Page<>();
-        apkPage.setCurrent(page);
-        apkPage.setSize(pageSize);
-        apkPage.setRecords(apkMapper.selectApkWithChannelCode(apkPage, versionId, channelCode, md5, deliveryStatus));
-        basicService.formatCreatedBy(apkPage.getRecords());
-        return ServiceResult.ok(apkPage);
+        final Page<ApkExt> apkExts = apkMapper.selectApkWithChannelCode(PageRequest.of(page, pageSize), versionId, channelCode, md5, deliveryStatus);
+        basicService.formatCreatedBy(apkExts);
+        return ServiceResult.ok(apkExts);
     }
 }

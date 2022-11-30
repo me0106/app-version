@@ -1,23 +1,26 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.IosVersion;
 import com.tairanchina.csp.avm.enums.ChatBotEventType;
 import com.tairanchina.csp.avm.mapper.IosVersionMapper;
-import com.tairanchina.csp.avm.utils.VersionCompareUtils;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.ChatBotService;
 import com.tairanchina.csp.avm.service.IosVersionService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
+import com.tairanchina.csp.avm.utils.VersionCompareUtils;
+import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import io.mybatis.mapper.example.Example;
+import io.mybatis.mapper.example.ExampleWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by hzlizx on 2018/6/11 0011
@@ -41,9 +44,9 @@ public class IosVersionServiceImpl implements IosVersionService {
         if (checkVersionExist(iosVersion)) {
             return ServiceResultConstants.VERSION_EXISTS;
         }
-        Integer insert = iosVersionMapper.insert(iosVersion);
+        int insert = iosVersionMapper.insert(iosVersion);
         if (insert > 0) {
-            chatBotService.sendMarkdown(ChatBotEventType.IOS_VERSION_CREATED, "创建新的iOS版本提醒",makeMarkdown(iosVersion));
+            chatBotService.sendMarkdown(ChatBotEventType.IOS_VERSION_CREATED, "创建新的iOS版本提醒", makeMarkdown(iosVersion));
             return ServiceResult.ok(iosVersion);
         } else {
             return ServiceResultConstants.DB_ERROR;
@@ -70,7 +73,7 @@ public class IosVersionServiceImpl implements IosVersionService {
         iosVersion.setUpdatedTime(null);
         iosVersion.setAppId(null);
         iosVersion.setDelFlag(null);
-        Integer integer = iosVersionMapper.updateById(iosVersion);
+        int integer = iosVersionMapper.updateById(iosVersion);
         if (integer > 0) {
             return ServiceResult.ok(iosVersion);
         } else {
@@ -88,7 +91,7 @@ public class IosVersionServiceImpl implements IosVersionService {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         iosVersion.setDelFlag(1);
-        Integer integer = iosVersionMapper.updateById(iosVersion);
+        int integer = iosVersionMapper.updateById(iosVersion);
         if (integer > 0) {
             return ServiceResult.ok(iosVersion);
         } else {
@@ -97,45 +100,40 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, EntityWrapper<IosVersion> wrapper) {
-        Page<IosVersion> versionPage = new Page<>();
-        versionPage.setCurrent(page);
-        versionPage.setSize(pageSize);
-        versionPage.setRecords(iosVersionMapper.selectPage(versionPage, wrapper));
-        basicService.formatCreatedBy(versionPage.getRecords());
-        return ServiceResult.ok(versionPage);
+    public ServiceResult list(int page, int pageSize, Example<IosVersion> wrapper) {
+        final Page<IosVersion> versions = iosVersionMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
+        basicService.formatCreatedBy(versions);
+        return ServiceResult.ok(versions);
     }
 
     @Override
-    public ServiceResult listSort(int page, int pageSize, EntityWrapper<IosVersion> wrapper) {
-        Page<IosVersion> versionPage = new Page<>(page,pageSize);
-        List<IosVersion> iosVersions = iosVersionMapper.selectList(wrapper);
-        iosVersions.sort((o1, o2) -> VersionCompareUtils.compareVersion(o2.getAppVersion(),o1.getAppVersion()));
-        List<IosVersion> pageList = iosVersions.subList((page-1) * pageSize, pageSize * page >= iosVersions.size() ? iosVersions.size() : pageSize * page);
-        versionPage.setRecords(pageList);
-        versionPage.setTotal(iosVersions.size());
-        basicService.formatCreatedBy(versionPage.getRecords());
-        return ServiceResult.ok(versionPage);
+    public ServiceResult listSort(int page, int pageSize, Example<IosVersion> wrapper) {
+        List<IosVersion> iosVersions = iosVersionMapper.selectByExample(wrapper);
+        iosVersions.sort((o1, o2) -> VersionCompareUtils.compareVersion(o2.getAppVersion(), o1.getAppVersion()));
+        List<IosVersion> pageList = iosVersions.subList((page - 1) * pageSize, Math.min(pageSize * page, iosVersions.size()));
+        final Page<IosVersion> versions = PageableExecutionUtils.getPage(pageList, PageRequest.of(page, pageSize), pageList::size);
+        basicService.formatCreatedBy(pageList);
+        return ServiceResult.ok(versions);
     }
 
     @Override
-    public ServiceResult findBetweenVersionList(String version1, String version2, EntityWrapper<IosVersion> wrapper) {
-        List<IosVersion> iosVersions = iosVersionMapper.selectList(wrapper);
-        String max = VersionCompareUtils.compareVersion(version1,version2) >= 0 ? version1 : version2;
-        String min = VersionCompareUtils.compareVersion(version1,version2) <= 0 ? version1 : version2;
-        List<IosVersion> versionList = iosVersions.stream().filter(o -> VersionCompareUtils.compareVersion(o.getAppVersion(), min) >= 0 && VersionCompareUtils.compareVersion(max, o.getAppVersion()) >= 0)
+    public ServiceResult findBetweenVersionList(String version1, String version2, Example<IosVersion> wrapper) {
+        List<IosVersion> iosVersions = iosVersionMapper.selectByExample(wrapper);
+        String max = VersionCompareUtils.compareVersion(version1, version2) >= 0 ? version1 : version2;
+        String min = VersionCompareUtils.compareVersion(version1, version2) <= 0 ? version1 : version2;
+        List<IosVersion> versionList =
+            iosVersions.stream().filter(o -> VersionCompareUtils.compareVersion(o.getAppVersion(), min) >= 0 && VersionCompareUtils.compareVersion(max, o.getAppVersion()) >= 0)
                 .sorted((o1, o2) -> VersionCompareUtils.compareVersion(o2.getAppVersion(), o1.getAppVersion())).collect(Collectors.toList());
         return ServiceResult.ok(versionList);
     }
 
     @Override
     public ServiceResult listAllVersion() {
-        ExtWrapper<IosVersion> wrapper = new ExtWrapper<>();
-        wrapper.and().eq("app_id", ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        wrapper.and().eq("del_flag", 0);
-        wrapper.setVersionSort("app_version",false);
-        List<IosVersion> iosVersions = iosVersionMapper.selectList(wrapper);
-        List<String> collect = iosVersions.stream().map(IosVersion::getAppVersion).collect(Collectors.toList());
+        final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
+        final ExampleWrapper<IosVersion, Integer> exampleWrapper = iosVersionMapper.wrapper().eq(IosVersion::getAppId, appId)
+            .eq(IosVersion::getDelFlag, 0);
+        ExtWrapper.orderByVersion(exampleWrapper, "app_version");
+        List<String> collect = exampleWrapper.list().stream().map(IosVersion::getAppVersion).collect(Collectors.toList());
         return ServiceResult.ok(collect);
     }
 
@@ -149,7 +147,7 @@ public class IosVersionServiceImpl implements IosVersionService {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         iosVersion.setVersionStatus(1);
-        Integer integer = iosVersionMapper.updateById(iosVersion);
+        int integer = iosVersionMapper.updateById(iosVersion);
         if (integer > 0) {
             return ServiceResult.ok(iosVersion);
         } else {
@@ -167,7 +165,7 @@ public class IosVersionServiceImpl implements IosVersionService {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         iosVersion.setVersionStatus(0);
-        Integer integer = iosVersionMapper.updateById(iosVersion);
+        int integer = iosVersionMapper.updateById(iosVersion);
         if (integer > 0) {
             return ServiceResult.ok(iosVersion);
         } else {
@@ -188,19 +186,16 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     private Boolean checkVersionExist(IosVersion iosVersion) {
-        EntityWrapper<IosVersion> wrapper = new EntityWrapper<>();
-        wrapper.and().eq("del_flag", 0);
-        wrapper.and().eq("app_version", iosVersion.getAppVersion());
-        wrapper.and().eq("app_id", ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        List<IosVersion> iosVersions = iosVersionMapper.selectList(wrapper);
+        final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
+        List<IosVersion> iosVersions = iosVersionMapper.wrapper().eq(IosVersion::getDelFlag, 0)
+            .eq(IosVersion::getAppVersion, iosVersion.getAppVersion())
+            .eq(IosVersion::getAppId, appId).list();
         if (!iosVersions.isEmpty()) {
             IosVersion result = iosVersions.get(0);
             if (iosVersion.getId() == null) {
                 return true;
             }
-            if (iosVersion.getId() != 0 && iosVersion.getId().intValue() != result.getId().intValue()) {
-                return true;
-            }
+            return iosVersion.getId() != 0 && iosVersion.getId().intValue() != result.getId().intValue();
         }
         return false;
     }
@@ -214,39 +209,25 @@ public class IosVersionServiceImpl implements IosVersionService {
         Integer customStatus = iosVersion.getUpdateType();
         //0：强制更新 1：一般更新 2：静默更新 3：可忽略更新 4：静默可忽略更新
         switch (customStatus) {
-            case 0:
-                sb.append("> **更新类型** ：强制更新\n\n");
-                break;
-            case 1:
-                sb.append("> **更新类型** ：一般更新\n\n");
-                break;
-            case 2:
-                sb.append("> **更新类型** ：静默更新\n\n");
-                break;
-            case 3:
-                sb.append("> **更新类型** ：可忽略更新\n\n");
-                break;
-            case 4:
-                sb.append("> **更新类型** ：静默可忽略更新\n\n");
-                break;
-            default:
-                break;
+            case 0 -> sb.append("> **更新类型** ：强制更新\n\n");
+            case 1 -> sb.append("> **更新类型** ：一般更新\n\n");
+            case 2 -> sb.append("> **更新类型** ：静默更新\n\n");
+            case 3 -> sb.append("> **更新类型** ：可忽略更新\n\n");
+            case 4 -> sb.append("> **更新类型** ：静默可忽略更新\n\n");
+            default -> {
+            }
         }
         Integer versionStatus = iosVersion.getVersionStatus();
-        if(versionStatus!=null){
+        if (versionStatus != null) {
             switch (versionStatus) {
-                case 0:
-                    sb.append("> **发布状态** ：未上架\n\n");
-                    break;
-                case 1:
-                    sb.append("> **发布状态** ：已上架\n\n");
-                    break;
-                default:
-                    break;
+                case 0 -> sb.append("> **发布状态** ：未上架\n\n");
+                case 1 -> sb.append("> **发布状态** ：已上架\n\n");
+                default -> {
+                }
             }
         }
         String appStoreUrl = iosVersion.getAppStoreUrl();
-        sb.append("> **苹果商店** ：[点击前往]("+ appStoreUrl +")\n\n");
+        sb.append("> **苹果商店** ：[点击前往](" + appStoreUrl + ")\n\n");
         return sb.toString();
     }
 }

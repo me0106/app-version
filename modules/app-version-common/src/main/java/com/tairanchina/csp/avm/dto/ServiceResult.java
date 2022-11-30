@@ -1,6 +1,7 @@
 package com.tairanchina.csp.avm.dto;
 
-import com.ecfront.dew.common.$;
+
+import com.tairanchina.csp.avm.common.Json;
 
 /**
  * Service返回
@@ -69,7 +70,7 @@ public class ServiceResult {
 
     @Override
     public String toString() {
-        return $.json.toJsonString(this);
+        return Json.toJsonString(this);
     }
 
 }

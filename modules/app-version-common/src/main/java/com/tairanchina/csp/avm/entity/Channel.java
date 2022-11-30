@@ -1,16 +1,24 @@
 package com.tairanchina.csp.avm.entity;
 
 
+import io.mybatis.provider.Entity;
+
 /**
  * 渠道
  * Created by hzlizx on 2018/6/6 0006
  */
+@Entity.Table
+
 public class Channel extends BasicEntity {
+
+    @Entity.Column(id = true)
+
     private Integer id;
     private Integer appId;
     private String channelName;
     private String channelCode;
     private Integer channelType;
+
     private Integer delFlag;
     private Integer channelStatus;
 

@@ -1,7 +1,12 @@
 package com.tairanchina.csp.avm.entity;
 
+import io.mybatis.provider.Entity;
+
+@Entity.Table
+
 public class OperationRecordLog extends BasicEntity {
 
+    @Entity.Column(id = true)
     private Integer id;
     private String operator;
     private Integer appId;

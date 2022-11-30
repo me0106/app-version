@@ -1,12 +1,13 @@
 package com.tairanchina.csp.avm.controller;
 
-import com.ecfront.dew.common.$;
-import com.tairanchina.csp.avm.entity.LoginInfo;
+
 import com.tairanchina.csp.avm.AppVersionManagerApplication;
+import com.tairanchina.csp.avm.common.Json;
+import com.tairanchina.csp.avm.entity.LoginInfo;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {AppVersionManagerApplication.class})
 @Transactional
 @ComponentScan("com.tairanchina.csp.avm.controller")
@@ -38,7 +39,7 @@ public class BaseControllerTest {
     @Autowired
     WebApplicationContext webApplicationContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         String authorization = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJiOWU5ODBjMTQ5NWU0ZDA1ODJjMjU3OTAxZDg2YjRmZiIsImF1ZCI6WyJ1Y2NjYzFkNjQ1ZjA4OGZlYmQiLCJ1Y2VudGVyIl0sImlfdiI6MTUyOTY1MTQ4NTAwMCwiaWRlbnRfaWQiOjMxMjI0NTksIm5iZiI6MTUzNzk0OTMzOSwicF92IjoxNTM3NjcyOTM0MDAwLCJpc3MiOiJ1Y2VudGVyIiwiZXhwIjoxNTM4MDM1NzM5LCJ0eXBlIjoxLCJpYXQiOjE1Mzc5NDkzMzksImp0aSI6IjMzNjY3MCJ9.loopoWwJ65MhfF4mKWdItwiaDDa6MPwWSXM5rFh2Hl3IktJBg1tGdb_ABCBAYxyf7LOR2ckkR_raX1gW3A64y6S7oQf27K1JdWKrkinKmK3Ak_N9klGuGFdoo4zS9MWr7p6aSjB3nJpSUM3ZI3GZdTpEllZMiWjZU_ulwadzjNk";
 
@@ -57,13 +58,13 @@ public class BaseControllerTest {
 
 
     public String post(String uri, Object requestBody) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content($.json.toJsonString(requestBody)).headers(httpHeaders)).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(Json.toJsonString(requestBody)).headers(httpHeaders)).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
         return contentAsString;
     }
 
     public String put(String uri, Object requestBody) throws Exception {
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content($.json.toJsonString(requestBody)).headers(httpHeaders)).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(uri).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(Json.toJsonString(requestBody)).headers(httpHeaders)).andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
         return contentAsString;
     }

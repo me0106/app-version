@@ -1,13 +1,16 @@
 package com.tairanchina.csp.avc.mapper;
 
 
-import com.baomidou.mybatisplus.plugins.Page;
 import com.tairanchina.csp.avm.dto.OperationRecordLogExt;
+import com.tairanchina.csp.avm.entity.OperationRecordLog;
 import com.tairanchina.csp.avm.mapper.OperationRecordLogMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,16 +23,15 @@ public class OperationRecordLogMapperTest extends BaseTest {
 
     @Test
     public void selectLogExtByQuery() throws Exception {
-        Page<OperationRecordLogExt> page = new Page<>();
-        page.setCurrent(1);
-        page.setSize(10);
         String endDate = "2018-06-27 19:10:27";
 
-        List list = operationRecordLogMapper.selectLogExtByQuery(page, null, null, null, null, null, null,null,endDate);
-        logger.info("size: " + list.size());
+        final OperationRecordLogMapper.Query query = new OperationRecordLogMapper.Query(null, null, null, null, null, null, null, endDate);
+        Page<OperationRecordLogExt> list = operationRecordLogMapper.selectLogExtByQuery(PageRequest.of(1, 10), query);
+        logger.info("size: " + list.getContent().size());
 
-        list = operationRecordLogMapper.selectLogExtByQuery(page, "", "", null, "", null, "",null,null);
-        logger.info("size: " + list.size());
+        final OperationRecordLogMapper.Query query1 = new OperationRecordLogMapper.Query("", "", null, "", null, "", null, null);
+        list = operationRecordLogMapper.selectLogExtByQuery(PageRequest.of(1, 10), query1);
+        logger.info("size: " + list.getContent().size());
     }
 
 }

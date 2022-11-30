@@ -1,10 +1,15 @@
 package com.tairanchina.csp.avm.entity;
 
+import io.mybatis.provider.Entity;
+
 /**
  * Created by hzlizx on 2018/6/20 0020
  */
+@Entity.Table
+
 public class RnPackage extends BasicEntity {
 
+    @Entity.Column(id = true)
     private Integer id;
     private Integer appId;
     private String rnName;

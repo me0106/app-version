@@ -1,10 +1,15 @@
 package com.tairanchina.csp.avm.entity;
 
+import io.mybatis.provider.Entity;
+
 /**
  * Created by hzlizx on 2018/9/27 0027
  */
+@Entity.Table
+
 public class ChatBot extends BasicEntity{
 
+    @Entity.Column(id = true)
     private Integer id;
     private String name;
     private String webhook;

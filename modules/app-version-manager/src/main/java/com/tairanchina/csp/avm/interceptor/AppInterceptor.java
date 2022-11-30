@@ -1,5 +1,7 @@
 package com.tairanchina.csp.avm.interceptor;
 
+import java.io.IOException;
+
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.entity.App;
 import com.tairanchina.csp.avm.entity.LoginInfo;
@@ -7,22 +9,20 @@ import com.tairanchina.csp.avm.entity.UserAppRel;
 import com.tairanchina.csp.avm.mapper.AppMapper;
 import com.tairanchina.csp.avm.mapper.UserAppRelMapper;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * 管理员拦截器
  * Created by hzlizx on 2018/4/25 0025
  */
 @Component
-public class AppInterceptor extends HandlerInterceptorAdapter {
+public class AppInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AppInterceptor.class);
 
     @Autowired
@@ -39,12 +39,12 @@ public class AppInterceptor extends HandlerInterceptorAdapter {
         UserAppRel userAppRel = new UserAppRel();
         userAppRel.setAppId(appId);
         userAppRel.setUserId(userId);
-        if(appId==null){
+        if (appId == null) {
             this.print(response, ServiceResultConstants.NO_APP_ID.toString());
             return false;
         }
         logger.info("appId={},userId={}", appId, userId);
-        UserAppRel userAppRel1 = userAppRelMapper.selectOne(userAppRel);
+        UserAppRel userAppRel1 = userAppRelMapper.selectOne(userAppRel).orElse(null);
         if (userAppRel1 != null) {
             //查询该APP是否可用
             App app = appMapper.selectById(appId);
@@ -65,11 +65,6 @@ public class AppInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        super.afterCompletion(request, response, handler, ex);
-    }
 
     private void print(HttpServletResponse response, String json) {
         response.setCharacterEncoding("UTF-8");

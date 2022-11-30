@@ -1,6 +1,7 @@
 package com.tairanchina.csp.avm.mq;
 
-import com.ecfront.dew.common.$;
+
+import com.tairanchina.csp.avm.common.Json;
 import com.tairanchina.csp.avm.enums.ChatBotEventType;
 
 import java.io.Serializable;
@@ -86,6 +87,6 @@ public class ChatBotMQEvent implements Serializable {
 
     @Override
     public String toString() {
-        return $.json.toJsonString(this);
+        return Json.toJsonString(this);
     }
 }

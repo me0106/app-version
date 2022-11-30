@@ -1,22 +1,22 @@
 package com.tairanchina.csp.avm.interceptor;
 
+import java.io.IOException;
+
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
+import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.LoginInfo;
 import com.tairanchina.csp.avm.entity.User;
 import com.tairanchina.csp.avm.service.UserService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
-import com.tairanchina.csp.avm.dto.ServiceResult;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * 用户登录拦截器
@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 @Component
 @PropertySource("classpath:application.yml")
-public class UserInterceptor extends HandlerInterceptorAdapter {
+public class UserInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(UserInterceptor.class);
 
     @Autowired
@@ -84,7 +84,6 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         ThreadLocalUtils.USER_THREAD_LOCAL.remove();
-        super.afterCompletion(request, response, handler, ex);
     }
 
     private void print(HttpServletResponse response, String json) {

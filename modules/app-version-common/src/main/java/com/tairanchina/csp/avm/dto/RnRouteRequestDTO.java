@@ -1,31 +1,31 @@
 package com.tairanchina.csp.avm.dto;
 
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class RnRouteRequestDTO {
 
-//    @ApiModelProperty(value = "主键ID，非必填，可能部分编辑操作时需要")
+//    @Schema(description= "主键ID，非必填，可能部分编辑操作时需要")
 //    private String id;
-    @ApiModelProperty(value = "路由通用昵称")
+    @Schema(description= "路由通用昵称")
     private String routeName;
-    @ApiModelProperty(value = "被拦截URL（约定）")
+    @Schema(description= "被拦截URL（约定）")
     private String routeKey;
-    @ApiModelProperty(value = "目标URL")
+    @Schema(description= "目标URL")
     private String routeValue;
-    @ApiModelProperty(value = "是否iOS开启")
+    @Schema(description= "是否iOS开启")
     private Integer iosEnabled;
-    @ApiModelProperty(value = "是否android开启")
+    @Schema(description= "是否android开启")
     private Integer androidEnabled;
-    @ApiModelProperty(value = "路由状态 0:关闭 1:线上开启 2:测试需要")
+    @Schema(description= "路由状态 0:关闭 1:线上开启 2:测试需要")
     private Integer routeStatus;
-    @ApiModelProperty(value = "ios最小版本")
+    @Schema(description= "ios最小版本")
     private String iosMin;
-    @ApiModelProperty(value = "ios最大版本")
+    @Schema(description= "ios最大版本")
     private String iosMax;
-    @ApiModelProperty(value = "android最小版本")
+    @Schema(description= "android最小版本")
     private String androidMin;
-    @ApiModelProperty(value = "android最大版本")
+    @Schema(description= "android最大版本")
     private String androidMax;
 
     public String getRouteName() {

@@ -1,32 +1,33 @@
 package com.tairanchina.csp.avm.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.tairanchina.csp.avm.annotation.OperationRecord;
+import com.tairanchina.csp.avm.constants.ServiceResultConstants;
+import com.tairanchina.csp.avm.dto.AdminUpdateNickNameRequestDTO;
 import com.tairanchina.csp.avm.dto.AppRequestDTO;
+import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.App;
 import com.tairanchina.csp.avm.entity.LoginInfo;
 import com.tairanchina.csp.avm.entity.OperationRecordLog;
 import com.tairanchina.csp.avm.entity.User;
-import com.tairanchina.csp.avm.constants.ServiceResultConstants;
-import com.tairanchina.csp.avm.dto.ServiceResult;
-import com.tairanchina.csp.avm.utils.StringUtilsExt;
-import com.tairanchina.csp.avm.annotation.OperationRecord;
-import com.tairanchina.csp.avm.dto.AdminUpdateNickNameRequestDTO;
 import com.tairanchina.csp.avm.service.AdminService;
 import com.tairanchina.csp.avm.service.UserService;
+import com.tairanchina.csp.avm.utils.StringUtilsExt;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.mybatis.mapper.example.Example;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 
 /**
  * 管理员操作
  */
-@Api(value = "/admin", tags = "管理员操作相关接口")
+@Tag(name = "管理员操作相关接口")
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -37,12 +38,12 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
-    @ApiOperation(
-            value = "判断当前登录用户是否是管理员",
-            notes = "判断当前登录用户是否是管理员"
+    @Operation(
+        description = "判断当前登录用户是否是管理员",
+        summary = "判断当前登录用户是否是管理员"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/isAdmin")
     public ServiceResult isAdmin() {
@@ -55,32 +56,33 @@ public class AdminController {
      *
      * @return 用户列表
      */
-    @ApiOperation(
-            value = "列出所有用户（可分页，查询）",
-            notes = "APP版本管理系统的全部用户列表"
+    @Operation(
+        description = "列出所有用户（可分页，查询）",
+        summary = "APP版本管理系统的全部用户列表"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "page", value = "页数", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示数据条数", defaultValue = "10"),
-            @ApiImplicitParam(name = "admin", value = "是否是管理员，0：管理员，1：管理员"),
-            @ApiImplicitParam(name = "phone", value = "手机号"),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "page", description = "页数", example = "1"),
+        @Parameter(name = "pageSize", description = "每页显示数据条数", example = "10"),
+        @Parameter(name = "admin", description = "是否是管理员，0：管理员，1：管理员"),
+        @Parameter(name = "phone", description = "手机号"),
     })
     @GetMapping("/user/list")
     public ServiceResult listUser(@RequestParam(required = false, defaultValue = "1") int page,
                                   @RequestParam(required = false, defaultValue = "10") int pageSize,
                                   @RequestParam(required = false, defaultValue = "0") int admin,
                                   @RequestParam(required = false, defaultValue = "") String phone) {
-        EntityWrapper<User> wrapper = new EntityWrapper<>();
+        Example<User> example = new Example<>();
+        final Example.Criteria<User> wrapper = example.createCriteria();
         if (admin == 1) {
-            wrapper.and().eq("is_admin", 1);
+            wrapper.andEqualTo(User::getIsAdmin, 1);
         }
         if (StringUtils.isNotBlank(phone)) {
-            wrapper.and().like("phone", "%" + phone + "%");
+            wrapper.andLike(User::getPhone, "%" + phone + "%");
         }
-        wrapper.isNotNull("first_login_time");
-        wrapper.orderBy("first_login_time", false);
-        return adminService.listUser(page, pageSize, wrapper);
+        wrapper.andIsNotNull(User::getFirstLoginTime);
+        example.orderByDesc(User::getFirstLoginTime);
+        return adminService.listUser(page, pageSize, example);
     }
 
     /**
@@ -88,31 +90,32 @@ public class AdminController {
      *
      * @return 应用列表
      */
-    @ApiOperation(
-            value = "列出所有应用（可分页，查询）",
-            notes = "应用列表"
+    @Operation(
+        description = "列出所有应用（可分页，查询）",
+        summary = "应用列表"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "page", value = "页数", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示数据条数", defaultValue = "10"),
-            @ApiImplicitParam(name = "appName", value = "应用名称"),
-            @ApiImplicitParam(name = "isAll", value = "是否查询全部应用(包括已软删的)，1是0否"),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "page", description = "页数", example = "1"),
+        @Parameter(name = "pageSize", description = "每页显示数据条数", example = "10"),
+        @Parameter(name = "appName", description = "应用名称"),
+        @Parameter(name = "isAll", description = "是否查询全部应用(包括已软删的)，1是0否"),
     })
     @GetMapping("/app/list")
     public ServiceResult listApp(@RequestParam(required = false, defaultValue = "1") int page,
                                  @RequestParam(required = false, defaultValue = "10") int pageSize,
                                  @RequestParam(required = false, defaultValue = "") String appName,
                                  @RequestParam(required = false, defaultValue = "false") Boolean isAll) {
-        EntityWrapper<App> wrapper = new EntityWrapper<>();
+        Example<App> example = new Example<>();
+        final Example.Criteria<App> wrapper = example.createCriteria();
         if (StringUtils.isNotBlank(appName)) {
-            wrapper.andNew().like("app_name", "%" + appName + "%");
+            wrapper.andLike(App::getAppName, "%" + appName + "%");
         }
         //是否查询全部的数据（已删和未删的）
         if (!isAll) {
-            wrapper.and().eq("del_flag", 0);
+            wrapper.andEqualTo(App::getDelFlag, 0);
         }
-        return adminService.listApp(page, pageSize, wrapper);
+        return adminService.listApp(page, pageSize, example);
     }
 
     /**
@@ -120,13 +123,13 @@ public class AdminController {
      *
      * @return App
      */
-    @ApiOperation(
-            value = "根据应用id（int）获取应用信息",
-            notes = "根据应用id（int）获取应用信息"
+    @Operation(
+        description = "根据应用id（int）获取应用信息",
+        summary = "根据应用id（int）获取应用信息"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "id", value = "应用ID", required = true),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "id", description = "应用ID", required = true),
     })
     @GetMapping("/app/{id}")
     public ServiceResult app(@PathVariable int id) {
@@ -141,25 +144,25 @@ public class AdminController {
      *
      * @return 应用列表
      */
-    @ApiOperation(
-            value = "列出用户与所有应用的绑定关系（带绑定信息）",
-            notes = "列出所有应用（带绑定信息）"
+    @Operation(
+        description = "列出用户与所有应用的绑定关系（带绑定信息）",
+        summary = "列出所有应用（带绑定信息）"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "page", value = "页数", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示数据条数", defaultValue = "10"),
-            @ApiImplicitParam(name = "userId", value = "用户ID", required = true),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "page", description = "页数", example = "1"),
+        @Parameter(name = "pageSize", description = "每页显示数据条数", example = "10"),
+        @Parameter(name = "userId", description = "用户ID", required = true),
     })
     @GetMapping("/app/list/bind")
     public ServiceResult listAppWithBindInfo(@RequestParam(required = false, defaultValue = "1") int page,
                                              @RequestParam(required = false, defaultValue = "10") int pageSize,
                                              @RequestParam String userId) {
-        EntityWrapper<App> wrapper = new EntityWrapper<>();
+        Example<App> wrapper = new Example<>();
         if (StringUtils.isEmpty(userId)) {
             return ServiceResultConstants.NEED_PARAMS;
         }
-        wrapper.and().eq("del_flag", 0);
+        wrapper.createCriteria().andEqualTo(App::getDelFlag, 0);
         return adminService.listAppWithBindInfo(page, pageSize, wrapper, userId);
     }
 
@@ -169,12 +172,12 @@ public class AdminController {
      * @param appRequestDTO 应用实体类（参数，主要是appName）
      * @return 是否成功
      */
-    @ApiOperation(
-            value = "创建APP",
-            notes = "创建APP"
+    @Operation(
+        description = "创建APP",
+        summary = "创建APP"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PostMapping("/app")
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.APP, description = OperationRecordLog.OperationDescription.CREATE_APP)
@@ -201,13 +204,13 @@ public class AdminController {
      * @param appRequestDTO 应用实体类（参数，主要是appId和appName）
      * @return 是否成功
      */
-    @ApiOperation(
-            value = "修改APP",
-            notes = "修改APP"
+    @Operation(
+        description = "修改APP",
+        summary = "修改APP"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "id", value = "appId(int型)", required = true),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "id", description = "appId(int型)", required = true),
     })
     @PutMapping("/app/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.APP, description = OperationRecordLog.OperationDescription.UPDATE_APP)
@@ -237,13 +240,13 @@ public class AdminController {
      * @param appId 应用ID
      * @return 是否成功
      */
-    @ApiOperation(
-            value = "删除某个APP",
-            notes = "删除某个APP"
+    @Operation(
+        description = "删除某个APP",
+        summary = "删除某个APP"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "appId", value = "appid(int型)", required = true),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "appId", description = "appid(int型)", required = true),
     })
     @DeleteMapping("/app/{appId}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.APP, description = OperationRecordLog.OperationDescription.DELETE_APP)
@@ -261,14 +264,14 @@ public class AdminController {
      * @param appId  应用ID
      * @return 是否成功
      */
-    @ApiOperation(
-            value = "绑定某个用户和APP",
-            notes = "绑定某个用户和APP"
+    @Operation(
+        description = "绑定某个用户和APP",
+        summary = "绑定某个用户和APP"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "userId", value = "用户ID", required = true),
-            @ApiImplicitParam(name = "appId", value = "appId，应用ID(int型)", required = true),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "userId", description = "用户ID", required = true),
+        @Parameter(name = "appId", description = "appId，应用ID(int型)", required = true),
     })
     @PutMapping("/{userId}/{appId}/bind")
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.USER_APP_REL, description = OperationRecordLog.OperationDescription.CREATE_USER_APP_REL)
@@ -285,13 +288,13 @@ public class AdminController {
      *
      * @return 应用列表
      */
-    @ApiOperation(
-            value = "列出用户所有绑定应用",
-            notes = "列出所有绑定应用"
+    @Operation(
+        description = "列出用户所有绑定应用",
+        summary = "列出所有绑定应用"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "userId", value = "用户ID", required = true),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "userId", description = "用户ID", required = true),
     })
     @GetMapping("/app/list/only/bind")
     public ServiceResult listBindApp(@RequestParam String userId) {
@@ -309,14 +312,14 @@ public class AdminController {
      * @param appId  应用ID
      * @return 是否成功
      */
-    @ApiOperation(
-            value = "解绑某个用户和APP",
-            notes = "解绑某个用户和APP"
+    @Operation(
+        description = "解绑某个用户和APP",
+        summary = "解绑某个用户和APP"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
-            @ApiImplicitParam(name = "userId", value = "用户ID", required = true),
-            @ApiImplicitParam(name = "appId", value = "appId，应用ID(int型)", required = true),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
+        @Parameter(name = "userId", description = "用户ID", required = true),
+        @Parameter(name = "appId", description = "appId，应用ID(int型)", required = true),
     })
     @PutMapping("/{userId}/{appId}/unBind")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE_FOREVER, resource = OperationRecordLog.OperationResource.USER_APP_REL, description = OperationRecordLog.OperationDescription.DELETE_FOREVER_USER_APP_REL)
@@ -333,12 +336,12 @@ public class AdminController {
      *
      * @return
      */
-    @ApiOperation(
-            value = "根据userId修改用户昵称（仅管理员才可操作）",
-            notes = "根据userId修改用户昵称"
+    @Operation(
+        description = "根据userId修改用户昵称（仅管理员才可操作）",
+        summary = "根据userId修改用户昵称"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", dataType = "string", name = "Authorization", value = "用户凭证", required = true),
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true),
     })
     @PutMapping("/user")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.USER, description = OperationRecordLog.OperationDescription.UPDATE_USER)

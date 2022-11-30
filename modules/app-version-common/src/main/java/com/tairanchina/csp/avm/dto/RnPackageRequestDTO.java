@@ -1,29 +1,29 @@
 package com.tairanchina.csp.avm.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class RnPackageRequestDTO {
-//    @ApiModelProperty(value = "主键ID，非必填，可能部分编辑操作时需要")
+//    @Schema(description= "主键ID，非必填，可能部分编辑操作时需要")
 //    private String id;
-    @ApiModelProperty(value = "模块名称（约定）")
+    @Schema(description= "模块名称（约定）")
     private String rnName;
-    @ApiModelProperty(value = "RN包模块通用昵称")
+    @Schema(description= "RN包模块通用昵称")
     private String rnNickName;
-    @ApiModelProperty(value = "RN包类型1或2，1 android ; 2 ios")
+    @Schema(description= "RN包类型1或2，1 android ; 2 ios")
     private Integer rnType;
-    @ApiModelProperty(value = "RN包资源地址")
+    @Schema(description= "RN包资源地址")
     private String resourceUrl;
-    @ApiModelProperty(value = "RN包大小(KB)")
+    @Schema(description= "RN包大小(KB)")
     private Integer rnSize;
-    @ApiModelProperty(value = "RN包版本号")
+    @Schema(description= "RN包版本号")
     private String rnVersion;
-    @ApiModelProperty(value = "包更新日志")
+    @Schema(description= "包更新日志")
     private String rnUpdateLog;
-    @ApiModelProperty(value = "RN包状态（0-关闭；1-线上开启；2-测试需要）")
+    @Schema(description= "RN包状态（0-关闭；1-线上开启；2-测试需要）")
     private Integer rnStatus;
-    @ApiModelProperty(value = "最小版本")
+    @Schema(description= "最小版本")
     private String versionMin;
-    @ApiModelProperty(value = "最大版本")
+    @Schema(description= "最大版本")
     private String versionMax;
 
     public String getVersionMin() {

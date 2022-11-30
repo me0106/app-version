@@ -1,10 +1,15 @@
 package com.tairanchina.csp.avm.entity;
 
+import io.mybatis.provider.Entity;
+
 /**
  * 安卓版本
  * Created by hzlizx on 2018/6/6 0006
  */
-public class AndroidVersion extends BasicEntity{
+@Entity.Table
+public class AndroidVersion extends BasicEntity {
+
+    @Entity.Column(id = true)
     private Integer id;
     private Integer appId;
     private String appVersion;

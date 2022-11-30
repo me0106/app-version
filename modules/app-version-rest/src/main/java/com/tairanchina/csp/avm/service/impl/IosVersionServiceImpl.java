@@ -1,6 +1,7 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.ecfront.dew.common.$;
+
+import com.tairanchina.csp.avm.common.Json;
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.App;
@@ -10,6 +11,7 @@ import com.tairanchina.csp.avm.service.AppService;
 import com.tairanchina.csp.avm.service.IosVersionService;
 import com.tairanchina.csp.avm.utils.VersionCompareUtils;
 import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import io.mybatis.mapper.example.Example;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +44,13 @@ public class IosVersionServiceImpl implements IosVersionService {
         }
         logger.debug("找到应用:{}", appSelected.getAppName());
 
-        ExtWrapper<IosVersion> iosVersionEntityWrapper = new ExtWrapper<>();
-        iosVersionEntityWrapper.and().eq("app_id", appSelected.getId());
-        iosVersionEntityWrapper.and().eq("del_flag", 0);
-        iosVersionEntityWrapper.and().eq("version_status", 1);
-        iosVersionEntityWrapper.setVersionSort("app_version", false);
-        List<IosVersion> iosVersions = iosVersionMapper.selectList(iosVersionEntityWrapper);
+        Example<IosVersion> example = new Example<>();
+        final Example.Criteria<IosVersion> wrapper = example.createCriteria();
+        wrapper.andEqualTo(IosVersion::getAppId, appSelected.getId());
+        wrapper.andEqualTo(IosVersion::getDelFlag, 0);
+        wrapper.andEqualTo(IosVersion::getVersionStatus, 1);
+        ExtWrapper.orderByVersion(example, "app_version");
+        List<IosVersion> iosVersions = iosVersionMapper.selectByExample(example);
         if (iosVersions.isEmpty()) {
             logger.debug("查询不到新版本，当前版本为最新");
             return ServiceResultConstants.NO_NEW_VERSION;
@@ -83,7 +86,7 @@ public class IosVersionServiceImpl implements IosVersionService {
         map.put("forceUpdate", iosVersion.getUpdateType());
         map.put("version", iosVersion.getAppVersion());
         ServiceResult ok = ServiceResult.ok(map);
-        logger.debug("结果：{}", $.json.toJsonString(ok));
+        logger.debug("结果：{}", Json.toJsonString(ok));
         return ok;
     }
 }

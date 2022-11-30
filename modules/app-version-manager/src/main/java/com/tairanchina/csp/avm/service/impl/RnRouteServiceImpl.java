@@ -1,7 +1,5 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.RnRoute;
@@ -9,7 +7,10 @@ import com.tairanchina.csp.avm.mapper.RnRouteMapper;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.RnRouteService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
+import io.mybatis.mapper.example.Example;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,7 +30,7 @@ public class RnRouteServiceImpl implements RnRouteService {
         rnRoute.setId(null);
         rnRoute.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         rnRoute.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        Integer insert = rnRouteMapper.insert(rnRoute);
+        int insert = rnRouteMapper.insert(rnRoute);
         if (insert > 0) {
             return ServiceResult.ok(rnRoute);
         } else {
@@ -43,11 +44,11 @@ public class RnRouteServiceImpl implements RnRouteService {
         if (rnRoute == null) {
             return ServiceResultConstants.RN_ROUTE_NOT_EXISTS;
         }
-        if(!rnRoute.getAppId().equals(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())){
+        if (!rnRoute.getAppId().equals(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())) {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         rnRoute.setDelFlag(1);
-        Integer integer = rnRouteMapper.updateById(rnRoute);
+        int integer = rnRouteMapper.updateById(rnRoute);
         if (integer > 0) {
             return ServiceResult.ok(rnRoute);
         } else {
@@ -61,15 +62,15 @@ public class RnRouteServiceImpl implements RnRouteService {
             return ServiceResultConstants.NEED_PARAMS;
         }
         RnRoute rnRouteSelected = rnRouteMapper.selectById(rnRoute.getId());
-        if(rnRouteSelected==null){
+        if (rnRouteSelected == null) {
             return ServiceResultConstants.RN_ROUTE_NOT_EXISTS;
         }
-        if(!rnRouteSelected.getAppId().equals(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())){
+        if (!rnRouteSelected.getAppId().equals(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())) {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         rnRoute.setAppId(null);
         rnRoute.setCreatedBy(null);
-        Integer integer = rnRouteMapper.updateById(rnRoute);
+        int integer = rnRouteMapper.updateById(rnRoute);
         if (integer > 0) {
             return ServiceResult.ok(rnRoute);
         } else {
@@ -78,12 +79,12 @@ public class RnRouteServiceImpl implements RnRouteService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, EntityWrapper<RnRoute> wrapper) {
-        wrapper.and().eq("app_id",ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        Page<RnRoute> rnRoutePage = new Page<>(page, pageSize);
-        rnRoutePage.setRecords(rnRouteMapper.selectPage(rnRoutePage, wrapper));
-        basicService.formatCreatedBy(rnRoutePage.getRecords());
-        return ServiceResult.ok(rnRoutePage);
+    public ServiceResult list(int page, int pageSize, Example<RnRoute> wrapper) {
+        final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
+        wrapper.createCriteria().andEqualTo(RnRoute::getAppId, appId);
+        final Page<RnRoute> routePage = rnRouteMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
+        basicService.formatCreatedBy(routePage);
+        return ServiceResult.ok(routePage);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class RnRouteServiceImpl implements RnRouteService {
         if (rnRoute == null) {
             return ServiceResultConstants.RN_ROUTE_NOT_EXISTS;
         }
-        if(!rnRoute.getAppId().equals(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())){
+        if (!rnRoute.getAppId().equals(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())) {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         basicService.formatCreatedBy(rnRoute);

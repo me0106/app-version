@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
-    "build:dev": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode development",
-    "build:test": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode test",
-    "build:uat": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode uat",
-    "build:prod": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build  --mode production",
+    "serve": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
+    "build:dev": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode development",
+    "build:test": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode test",
+    "build:uat": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build --mode uat",
+    "build:prod": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build  --mode production",
     "lint": "export NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service lint"
   },
   "dependencies": {

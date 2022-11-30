@@ -120,7 +120,7 @@ export default {
                 })
                 .then(response => {
                     if (response.data.code === 200) {
-                        this.channelCodes = response.data.data.records;
+                        this.channelCodes = response.data.data.content;
                     } else {
                         this.$Notice.error({
                             title: '请求失败',

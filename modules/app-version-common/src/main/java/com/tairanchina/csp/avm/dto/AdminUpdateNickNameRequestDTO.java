@@ -1,15 +1,15 @@
 package com.tairanchina.csp.avm.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotBlank;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
 public class AdminUpdateNickNameRequestDTO {
 
-    @ApiModelProperty(value = "用户Id", required = true)
+    @Schema(description = "用户Id")
     @NotBlank(message = "userId不能为空")
     private String userId;
 
-    @ApiModelProperty(value = "用户昵称", required = true)
+    @Schema(description = "用户昵称")
     @NotBlank(message = "nickName不能为空")
     private String nickName;
 

@@ -1,6 +1,7 @@
 package com.tairanchina.csp.avm.dto;
 
-import com.ecfront.dew.common.$;
+
+import com.tairanchina.csp.avm.common.Json;
 
 /**
  * Created by hzlizx on 2019/2/21
@@ -46,6 +47,6 @@ public class UserLoginStatus {
 
     @Override
     public String toString() {
-        return $.json.toJsonString(this);
+        return Json.toJsonString(this);
     }
 }

@@ -1,31 +1,31 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.tairanchina.csp.avm.ServiceException;
+import com.tairanchina.csp.avm.common.Mq;
 import com.tairanchina.csp.avm.constants.MQKey;
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
-import com.tairanchina.csp.avm.mq.ChatBotMQEvent;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.App;
 import com.tairanchina.csp.avm.entity.ChatBot;
 import com.tairanchina.csp.avm.enums.ChatBotEventType;
 import com.tairanchina.csp.avm.mapper.AppMapper;
 import com.tairanchina.csp.avm.mapper.ChatBotMapper;
-import com.tairanchina.csp.avm.utils.StringUtilsExt;
+import com.tairanchina.csp.avm.mq.ChatBotMQEvent;
 import com.tairanchina.csp.avm.service.ChatBotService;
+import com.tairanchina.csp.avm.utils.StringUtilsExt;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
-import com.tairanchina.csp.dew.Dew;
+import io.mybatis.mapper.example.Example;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by hzlizx on 2018/9/27 0027
@@ -55,7 +55,7 @@ public class ChatBotServiceImpl implements ChatBotService {
         }
         ChatBot chatBot = new ChatBot();
         chatBot.setAppId(appId);
-        Integer integer = chatBotMapper.selectCount(new EntityWrapper<>(chatBot));
+        long integer = chatBotMapper.wrapper().eq(ChatBot::getAppId, appId).count();
         if (integer > 0) {
             return ServiceResultConstants.CHAT_BOT_EXISTS;
         }
@@ -66,7 +66,7 @@ public class ChatBotServiceImpl implements ChatBotService {
         chatBot.setActiveEvent(eventStr);
         chatBot.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         chatBot.setCreatedTime(new Date());
-        Integer insert = chatBotMapper.insert(chatBot);
+        int insert = chatBotMapper.insert(chatBot);
         if (insert < 1) {
             throw new ServiceException("ChatBot插入失败"); // 回滚
         }
@@ -78,7 +78,7 @@ public class ChatBotServiceImpl implements ChatBotService {
     public ServiceResult editChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events) {
         ChatBot chatBot = new ChatBot();
         chatBot.setAppId(appId);
-        ChatBot chatBotSelected = chatBotMapper.selectOne(chatBot);
+        ChatBot chatBotSelected = chatBotMapper.selectOne(chatBot).orElse(null);
         if (chatBotSelected == null) {
             return ServiceResultConstants.CHAT_BOT_NOT_EXISTS;
         }
@@ -93,7 +93,7 @@ public class ChatBotServiceImpl implements ChatBotService {
         chatBotSelected.setActiveEvent(eventStr);
         chatBotSelected.setUpdatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         chatBotSelected.setUpdatedTime(new Date());
-        Integer integer = chatBotMapper.updateById(chatBotSelected);
+        int integer = chatBotMapper.updateById(chatBotSelected);
         if (integer < 1) {
             throw new ServiceException("ChatBot修改失败"); // 回滚
         }
@@ -102,9 +102,9 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     public ServiceResult deleteChatBot(Integer appId) {
-        ChatBot chatBot = new ChatBot();
-        chatBot.setAppId(appId);
-        chatBotMapper.delete(new EntityWrapper<>(chatBot));
+        final Example<ChatBot> example = chatBotMapper.example();
+        example.createCriteria().andEqualTo(ChatBot::getAppId, appId);
+        chatBotMapper.deleteByExample(example);
         return ServiceResult.ok(null);
     }
 
@@ -112,7 +112,7 @@ public class ChatBotServiceImpl implements ChatBotService {
     public ServiceResult getByAppId(int appId) {
         ChatBot chatBot = new ChatBot();
         chatBot.setAppId(appId);
-        ChatBot chatBotSelected = chatBotMapper.selectOne(chatBot);
+        ChatBot chatBotSelected = chatBotMapper.selectOne(chatBot).orElse(null);
         if (chatBotSelected == null) {
             return ServiceResultConstants.APP_NOT_BIND_BOT;
         }
@@ -135,7 +135,7 @@ public class ChatBotServiceImpl implements ChatBotService {
         Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         ChatBot chatBot = new ChatBot();
         chatBot.setAppId(appId);
-        ChatBot chatBotSelected = chatBotMapper.selectOne(chatBot);
+        ChatBot chatBotSelected = chatBotMapper.selectOne(chatBot).orElse(null);
         if (chatBotSelected != null) {
             // 存在机器人
             String activeEvent = chatBotSelected.getActiveEvent();
@@ -152,7 +152,7 @@ public class ChatBotServiceImpl implements ChatBotService {
                 chatBotMQEvent.setMessage(text);
                 chatBotMQEvent.setType(type);
                 // 发送MQ，消费者去发送机器人消息
-                Dew.cluster.mq.request(MQKey.CHAT_BOT_MQ, chatBotMQEvent.toString());
+                Mq.request(MQKey.CHAT_BOT_MQ, chatBotMQEvent.toString());
             } else {
                 logger.info("机器人未绑定该事件:{}", event.name());
             }

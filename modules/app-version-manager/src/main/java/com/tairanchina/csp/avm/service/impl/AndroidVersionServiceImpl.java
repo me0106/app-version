@@ -1,7 +1,8 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.AndroidVersion;
@@ -9,18 +10,19 @@ import com.tairanchina.csp.avm.entity.Apk;
 import com.tairanchina.csp.avm.enums.ChatBotEventType;
 import com.tairanchina.csp.avm.mapper.AndroidVersionMapper;
 import com.tairanchina.csp.avm.mapper.ApkMapper;
-import com.tairanchina.csp.avm.mapper.ChannelMapper;
-import com.tairanchina.csp.avm.utils.VersionCompareUtils;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
 import com.tairanchina.csp.avm.service.AndroidVersionService;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.ChatBotService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
+import com.tairanchina.csp.avm.utils.VersionCompareUtils;
+import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import io.mybatis.mapper.example.Example;
+import io.mybatis.mapper.example.ExampleWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 安卓版本管理实现
@@ -44,14 +46,14 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     @Override
     public ServiceResult createAndroidVersion(AndroidVersion androidVersion) {
         //校验安卓版本是否已存在
-        if (checkVersionExist(androidVersion)){
+        if (checkVersionExist(androidVersion)) {
             return ServiceResultConstants.VERSION_EXISTS;
         }
         androidVersion.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         androidVersion.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        Integer insert = androidVersionMapper.insert(androidVersion);
+        int insert = androidVersionMapper.insert(androidVersion);
         if (insert > 0) {
-            chatBotService.sendMarkdown(ChatBotEventType.ANDROID_VERSION_CREATED, "创建新的Android版本提醒",makeMarkdown(androidVersion));
+            chatBotService.sendMarkdown(ChatBotEventType.ANDROID_VERSION_CREATED, "创建新的Android版本提醒", makeMarkdown(androidVersion));
             return ServiceResult.ok(androidVersion);
         } else {
             return ServiceResultConstants.DB_ERROR;
@@ -68,14 +70,13 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         androidVersion.setDelFlag(1);
-        Integer integer = androidVersionMapper.updateById(androidVersion);
+        int integer = androidVersionMapper.updateById(androidVersion);
         if (integer > 0) {
-            EntityWrapper<Apk> wrapper = new EntityWrapper<>();
-            wrapper.and().eq("version_id",versionId);
-            wrapper.and().eq("del_flag",0);
             Apk apk = new Apk();
             apk.setDelFlag(1);
-            apkMapper.update(apk,wrapper);
+            final Example<Apk> example = apkMapper.example();
+            example.createCriteria().andEqualTo(Apk::getVersionId, versionId).andEqualTo(Apk::getDelFlag, 0);
+            apkMapper.updateByExample(apk, example);
             return ServiceResult.ok(androidVersion);
         } else {
             return ServiceResultConstants.DB_ERROR;
@@ -94,7 +95,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
         if (androidVersion.getDelFlag() != 1) {
             return ServiceResultConstants.VERSION_NOT_SOFT_DELETE;
         }
-        Integer integer = androidVersionMapper.deleteById(versionId);
+        int integer = androidVersionMapper.deleteById(versionId);
         if (integer > 0) {
             return ServiceResult.ok(androidVersion);
         } else {
@@ -113,7 +114,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
         //校验安卓版本是否已存在
-        if (checkVersionExist(androidVersion)){
+        if (checkVersionExist(androidVersion)) {
             return ServiceResultConstants.VERSION_EXISTS;
         }
         androidVersion.setDelFlag(0);
@@ -130,31 +131,29 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, EntityWrapper<AndroidVersion> wrapper) {
-        Page<AndroidVersion> pageEntity = new Page<>(page, pageSize);
-        pageEntity.setRecords(androidVersionMapper.selectPage(pageEntity, wrapper));
-        basicService.formatCreatedBy(pageEntity.getRecords());
-        return ServiceResult.ok(pageEntity);
+    public ServiceResult list(int page, int pageSize, Example<AndroidVersion> wrapper) {
+        final Page<AndroidVersion> versions = androidVersionMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
+        basicService.formatCreatedBy(versions);
+        return ServiceResult.ok(versions);
     }
 
     @Override
-    public ServiceResult listSort(int page, int pageSize, EntityWrapper<AndroidVersion> wrapper) {
-        Page<AndroidVersion> pageEntity = new Page<>(page, pageSize);
-        List<AndroidVersion> androidVersions = androidVersionMapper.selectList(wrapper);
-        androidVersions.sort((o1, o2) -> VersionCompareUtils.compareVersion(o2.getAppVersion(),o1.getAppVersion()));
-        List<AndroidVersion> pageList = androidVersions.subList((page-1) * pageSize, pageSize * page >= androidVersions.size() ? androidVersions.size() : pageSize * page);
-        pageEntity.setRecords(pageList);
-        pageEntity.setTotal(androidVersions.size());
-        basicService.formatCreatedBy(pageEntity.getRecords());
-        return ServiceResult.ok(pageEntity);
+    public ServiceResult listSort(int page, int pageSize, Example<AndroidVersion> wrapper) {
+        List<AndroidVersion> androidVersions = androidVersionMapper.selectByExample(wrapper);
+        androidVersions.sort((o1, o2) -> VersionCompareUtils.compareVersion(o2.getAppVersion(), o1.getAppVersion()));
+        List<AndroidVersion> pageList = androidVersions.subList((page - 1) * pageSize, Math.min(pageSize * page, androidVersions.size()));
+        final Page<AndroidVersion> versions = PageableExecutionUtils.getPage(pageList, PageRequest.of(page, pageSize), pageList::size);
+        basicService.formatCreatedBy(pageList);
+        return ServiceResult.ok(versions);
     }
 
     @Override
-    public ServiceResult findBetweenVersionList(String version1, String version2, EntityWrapper<AndroidVersion> wrapper) {
-        List<AndroidVersion> androidVersions = androidVersionMapper.selectList(wrapper);
-        String max = VersionCompareUtils.compareVersion(version1,version2) >= 0 ? version1 : version2;
-        String min = VersionCompareUtils.compareVersion(version1,version2) <= 0 ? version1 : version2;
-        List<AndroidVersion> versionList = androidVersions.stream().filter(o -> VersionCompareUtils.compareVersion(o.getAppVersion(), min) >= 0 && VersionCompareUtils.compareVersion(max, o.getAppVersion()) >= 0)
+    public ServiceResult findBetweenVersionList(String version1, String version2, Example<AndroidVersion> wrapper) {
+        List<AndroidVersion> androidVersions = androidVersionMapper.selectByExample(wrapper);
+        String max = VersionCompareUtils.compareVersion(version1, version2) >= 0 ? version1 : version2;
+        String min = VersionCompareUtils.compareVersion(version1, version2) <= 0 ? version1 : version2;
+        List<AndroidVersion> versionList =
+            androidVersions.stream().filter(o -> VersionCompareUtils.compareVersion(o.getAppVersion(), min) >= 0 && VersionCompareUtils.compareVersion(max, o.getAppVersion()) >= 0)
                 .sorted((o1, o2) -> VersionCompareUtils.compareVersion(o2.getAppVersion(), o1.getAppVersion())).collect(Collectors.toList());
         return ServiceResult.ok(versionList);
     }
@@ -174,12 +173,10 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
 
     @Override
     public ServiceResult listAllVersion() {
-        ExtWrapper<AndroidVersion> wrapper = new ExtWrapper<>();
-        wrapper.and().eq("app_id", ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        wrapper.and().eq("del_flag", 0);
-        wrapper.setVersionSort("app_version",false);
-        List<AndroidVersion> iosVersions = androidVersionMapper.selectList(wrapper);
-        List<String> collect = iosVersions.stream().map(AndroidVersion::getAppVersion).collect(Collectors.toList());
+        final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
+        final ExampleWrapper<AndroidVersion, Integer> wrapper = androidVersionMapper.wrapper().eq(AndroidVersion::getAppId, appId).eq(AndroidVersion::getDelFlag, 0);
+        ExtWrapper.orderByVersion(wrapper, "app_version");
+        List<String> collect = wrapper.list().stream().map(AndroidVersion::getAppVersion).collect(Collectors.toList());
         return ServiceResult.ok(collect);
     }
 
@@ -245,19 +242,16 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
 
     private Boolean checkVersionExist(AndroidVersion androidVersion) {
         String appVersion = androidVersion.getAppVersion();
-        EntityWrapper<AndroidVersion> wrapper = new EntityWrapper<>();
-        wrapper.and().eq("del_flag", 0);
-        wrapper.and().eq("app_version", appVersion);
-        wrapper.and().eq("app_id", ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        List<AndroidVersion> androidVersions = androidVersionMapper.selectList(wrapper);
+        final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
+        List<AndroidVersion> androidVersions = androidVersionMapper.wrapper().eq(AndroidVersion::getAppId, appId)
+            .eq(AndroidVersion::getAppVersion, appVersion)
+            .eq(AndroidVersion::getDelFlag, 0).list();
         if (!androidVersions.isEmpty()) {
             AndroidVersion result = androidVersions.get(0);
             if (androidVersion.getId() == null) {
                 return true;
             }
-            if (androidVersion.getId() != 0 && androidVersion.getId().intValue() != result.getId().intValue()) {
-                return true;
-            }
+            return androidVersion.getId() != 0 && androidVersion.getId().intValue() != result.getId().intValue();
         }
         return false;
     }
@@ -289,7 +283,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
                 break;
         }
         Integer versionStatus = androidVersion.getVersionStatus();
-        if(versionStatus!=null){
+        if (versionStatus != null) {
             switch (versionStatus) {
                 case 0:
                     sb.append("> **发布状态** ：未上架\n\n");

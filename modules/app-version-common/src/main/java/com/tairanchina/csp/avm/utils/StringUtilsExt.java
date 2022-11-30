@@ -1,6 +1,6 @@
 package com.tairanchina.csp.avm.utils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by hzlizx on 2018/6/20 0020

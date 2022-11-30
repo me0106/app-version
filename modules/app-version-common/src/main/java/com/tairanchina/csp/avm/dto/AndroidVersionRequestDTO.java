@@ -1,26 +1,26 @@
 package com.tairanchina.csp.avm.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class AndroidVersionRequestDTO {
 
-    @ApiModelProperty(value = "主键ID，非必填，可能部分编辑操作时需要")
+    @Schema(description= "主键ID，非必填，可能部分编辑操作时需要")
     private String id;
-    @ApiModelProperty(value = "版本号")
+    @Schema(description= "版本号")
     private String appVersion;
-    @ApiModelProperty(value = "更新类型，0：强制更新 1：一般更新 2：静默更新 3：可忽略更新 4：静默可忽略更新")
+    @Schema(description= "更新类型，0：强制更新 1：一般更新 2：静默更新 3：可忽略更新 4：静默可忽略更新")
     private Integer updateType;
-    @ApiModelProperty(value = "更新描述")
+    @Schema(description= "更新描述")
     private String versionDescription;
-    @ApiModelProperty(value = "允许最低版本（低于这个要强制更新）")
+    @Schema(description= "允许最低版本（低于这个要强制更新）")
     private String allowLowestVersion;
-    @ApiModelProperty(value = "发布状态（0-未上架；1-已上架）")
+    @Schema(description= "发布状态（0-未上架；1-已上架）")
     private Integer versionStatus;
-    @ApiModelProperty(value = "灰度发布（0-无；1-白名单发布；2-IP发布）")
+    @Schema(description= "灰度发布（0-无；1-白名单发布；2-IP发布）")
     private Integer grayReleased;
-    @ApiModelProperty(value = "白名单ID")
+    @Schema(description= "白名单ID")
     private Integer whiteListId;
-    @ApiModelProperty(value = "IP段发布的list ID")
+    @Schema(description= "IP段发布的list ID")
     private Integer ipListId;
 
     public String getAppVersion() {

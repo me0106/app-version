@@ -1,20 +1,25 @@
 package com.tairanchina.csp.avm.entity;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Date;
+
+import io.mybatis.provider.Entity;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Table;
 
 /**
  * 用户表
  * Created by hzlizx on 2018/6/6 0006
  */
+@Entity.Table
 public class User {
+
+    @Entity.Column(id = true)
 
     private String userId;
     private String phone;
     private String username;
     private String password;
-    @ApiModelProperty(value = "用户昵称")
+    @Schema(description= "用户昵称")
     private String nickName;
     private Date firstLoginTime;
     private Integer isAdmin;

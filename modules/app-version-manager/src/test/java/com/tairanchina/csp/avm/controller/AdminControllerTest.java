@@ -2,7 +2,7 @@ package com.tairanchina.csp.avm.controller;
 
 import com.tairanchina.csp.avm.entity.App;
 import com.tairanchina.csp.avm.entity.User;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

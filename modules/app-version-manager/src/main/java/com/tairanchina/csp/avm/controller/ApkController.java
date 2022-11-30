@@ -9,8 +9,9 @@ import com.tairanchina.csp.avm.entity.OperationRecordLog;
 import com.tairanchina.csp.avm.annotation.OperationRecord;
 import com.tairanchina.csp.avm.service.ApkService;
 import com.tairanchina.csp.avm.service.ChannelService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,22 +36,22 @@ public class ApkController {
     private ChannelService channelService;
 
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PostMapping("/upload")
     public ServiceResult upload() {
         return ServiceResult.ok(null);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
-            @ApiImplicitParam(name = "page", value = "页数", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示数据条数", defaultValue = "10"),
-            @ApiImplicitParam(name = "versionId", value = "版本id"),
-            @ApiImplicitParam(name = "channelCode", value = "渠道码"),
-            @ApiImplicitParam(name = "md5", value = "md5"),
-            @ApiImplicitParam(name = "deliveryStatus", value = "上架状态，0-未上架；1-已上架"),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
+        @Parameter(name = "page", description = "页数", example = "1"),
+        @Parameter(name = "pageSize", description = "每页显示数据条数", example = "10"),
+        @Parameter(name = "versionId", description = "版本id"),
+        @Parameter(name = "channelCode", description = "渠道码"),
+        @Parameter(name = "md5", description = "md5"),
+        @Parameter(name = "deliveryStatus", description = "上架状态，0-未上架；1-已上架"),
     })
     @GetMapping
     public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
@@ -65,8 +66,8 @@ public class ApkController {
         return apkService.getApkPageWithChannelCode(page, pageSize, versionId, channelCode, md5, deliveryStatus);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PostMapping
     @RequestMapping(produces = "application/json;charset=UTF-8", consumes = "application/json;charset=UTF-8")
@@ -84,14 +85,14 @@ public class ApkController {
         } else {
             logger.info("找不到Channel");
             return ServiceResult.failed(
-                    ServiceResultConstants.APK_SAVE_ERROR.getCode(),
-                    "文件[ " + uploadFileEntity.getFileName() + " ]录入失败，原因：" + serviceResult.getMessage()
+                ServiceResultConstants.APK_SAVE_ERROR.getCode(),
+                "文件[ " + uploadFileEntity.getFileName() + " ]录入失败，原因：" + serviceResult.getMessage()
             );
         }
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PutMapping("/{id}/delivery")
     @OperationRecord(type = OperationRecordLog.OperationType.DELIVERY, resource = OperationRecordLog.OperationResource.APK, description = OperationRecordLog.OperationDescription.DELIVERY_APK)
@@ -103,8 +104,8 @@ public class ApkController {
     }
 
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PutMapping("/{id}/undelivery")
     @OperationRecord(type = OperationRecordLog.OperationType.UNDELIVERY, resource = OperationRecordLog.OperationResource.APK, description = OperationRecordLog.OperationDescription.UNDELIVERY_APK)
@@ -115,8 +116,8 @@ public class ApkController {
         return apkService.undelivery(id);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.APK, description = OperationRecordLog.OperationDescription.DELETE_APK)
@@ -127,8 +128,8 @@ public class ApkController {
         return apkService.delete(id);
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/channel/check")
     public ServiceResult checkChannel(@RequestParam String channelCode) {
@@ -143,8 +144,8 @@ public class ApkController {
         }
     }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/exists")
     public ServiceResult exists(@RequestParam String channelCode,

@@ -1,15 +1,14 @@
 package com.tairanchina.csp.avc.mapper;
 
 
-import com.baomidou.mybatisplus.plugins.Page;
 import com.tairanchina.csp.avm.dto.ApkExt;
 import com.tairanchina.csp.avm.mapper.ApkMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 public class ApkMapperTest extends BaseTest {
 
@@ -24,15 +23,12 @@ public class ApkMapperTest extends BaseTest {
         String channelCode = "";
         String md5 = "";
         Integer deliveryStatus = null;
-        Page<ApkExt> apkPage = new Page<>();
-        apkPage.setCurrent(1);
-        apkPage.setSize(10);
-        List<ApkExt> apkExts = apkMapper.selectApkWithChannelCode(apkPage, versionId, channelCode, md5, deliveryStatus);
-        logger.info("apkExts..." + apkExts.size());
+        Page<ApkExt> apkExts = apkMapper.selectApkWithChannelCode(PageRequest.of(1,10), versionId, channelCode, md5, deliveryStatus);
+        logger.info("apkExts..." + apkExts.getContent().size());
 
-        apkExts = apkMapper.selectApkWithChannelCode(apkPage, null, "", "", null);
-        logger.info("apkExts..." + apkExts.size());
-        assert apkExts.size() > 0;
+        apkExts = apkMapper.selectApkWithChannelCode(PageRequest.of(1,10), null, "", "", null);
+        logger.info("apkExts..." + apkExts.getContent().size());
+        assert apkExts.getContent().size() > 0;
     }
 
 }

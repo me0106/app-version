@@ -1,8 +1,9 @@
 package com.tairanchina.csp.avm.enums;
 
-import com.ecfront.dew.common.$;
 
 import java.util.HashMap;
+
+import com.tairanchina.csp.avm.common.Json;
 
 /**
  * Created by hzlizx on 2018/9/27 0027
@@ -27,7 +28,7 @@ public enum ChatBotEventType {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("event", this.name());
         hashMap.put("message", this.message);
-        return $.json.toJsonString(hashMap);
+        return Json.toJsonString(hashMap);
     }
 
 }

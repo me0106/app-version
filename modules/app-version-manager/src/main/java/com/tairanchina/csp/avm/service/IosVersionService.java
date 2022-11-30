@@ -1,8 +1,8 @@
 package com.tairanchina.csp.avm.service;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.IosVersion;
+import io.mybatis.mapper.example.Example;
 
 /**
  * Created by hzlizx on 2018/6/11 0011
@@ -37,7 +37,7 @@ public interface IosVersionService {
      * @param wrapper
      * @return
      */
-    ServiceResult list(int page, int pageSize, EntityWrapper<IosVersion> wrapper);
+    ServiceResult list(int page, int pageSize, Example<IosVersion> wrapper);
 
     /**
      * 列表
@@ -46,7 +46,7 @@ public interface IosVersionService {
      * @param wrapper
      * @return
      */
-    ServiceResult listSort(int page, int pageSize, EntityWrapper<IosVersion> wrapper);
+    ServiceResult listSort(int page, int pageSize, Example<IosVersion> wrapper);
 
     /**
      * 根据条件获取两版本之间的所有版本
@@ -55,7 +55,7 @@ public interface IosVersionService {
      * @param wrapper       查询条件
      * @return
      */
-    ServiceResult findBetweenVersionList(String version1, String version2, EntityWrapper<IosVersion> wrapper);
+    ServiceResult findBetweenVersionList(String version1, String version2, Example<IosVersion> wrapper);
 
     /**
      * 列出当前所有版本

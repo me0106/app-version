@@ -1,6 +1,7 @@
 package com.tairanchina.csp.avm.wapper;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.mybatis.mapper.example.Example;
+import io.mybatis.mapper.example.ExampleWrapper;
 
 /**
  * 描述:版本比较拓展
@@ -8,13 +9,22 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
  * @author hzds
  * @Create 2018-09 : 26 19:44
  */
-public class ExtWrapper<T> extends EntityWrapper<T> {
+public class ExtWrapper {
 
-    public ExtWrapper<T> setVersionSort(String columns,Boolean isAsc) {
-        this.orderBy("CONVERT(substring_index(substring_index(substring_index("+columns+",'-',1),'.',1),'.',-1),SIGNED)", isAsc);
-        this.orderBy("CONVERT(substring_index(substring_index(substring_index("+columns+",'-',1),'.',2),'.',-1),SIGNED)", isAsc);
-        this.orderBy("CONVERT(substring_index(substring_index(substring_index("+columns+",'-',1),'.',3),'.',-1),SIGNED)", isAsc);
-        this.orderBy("CONVERT(substring_index(substring_index(substring_index("+columns+",'-',1),'.',4),'.',-1),SIGNED)", isAsc);
-        return this;
+    @SuppressWarnings("rawtypes")
+    public static void orderByVersion(ExampleWrapper wrapper, String columns) {
+        wrapper.orderBy("CONVERT(substring_index(substring_index(substring_index(" + columns + ",'-',1),'.',1),'.',-1),SIGNED)");
+        wrapper.orderBy("CONVERT(substring_index(substring_index(substring_index(" + columns + ",'-',1),'.',2),'.',-1),SIGNED)");
+        wrapper.orderBy("CONVERT(substring_index(substring_index(substring_index(" + columns + ",'-',1),'.',3),'.',-1),SIGNED)");
+        wrapper.orderBy("CONVERT(substring_index(substring_index(substring_index(" + columns + ",'-',1),'.',4),'.',-1),SIGNED)");
     }
+
+    @SuppressWarnings("rawtypes")
+    public static void orderByVersion(Example wrapper, String columns) {
+        wrapper.orderBy("CONVERT(substring_index(substring_index(substring_index(" + columns + ",'-',1),'.',1),'.',-1),SIGNED)");
+        wrapper.orderBy("CONVERT(substring_index(substring_index(substring_index(" + columns + ",'-',1),'.',2),'.',-1),SIGNED)");
+        wrapper.orderBy("CONVERT(substring_index(substring_index(substring_index(" + columns + ",'-',1),'.',3),'.',-1),SIGNED)");
+        wrapper.orderBy("CONVERT(substring_index(substring_index(substring_index(" + columns + ",'-',1),'.',4),'.',-1),SIGNED)");
+    }
+
 }

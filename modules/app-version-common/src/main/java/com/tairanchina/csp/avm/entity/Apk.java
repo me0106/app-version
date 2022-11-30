@@ -1,10 +1,15 @@
 package com.tairanchina.csp.avm.entity;
 
+import io.mybatis.provider.Entity;
+
 /**
  * Apk
  * Created by hzlizx on 2018/6/6 0006
  */
-public class Apk extends BasicEntity{
+@Entity.Table
+public class Apk extends BasicEntity {
+
+    @Entity.Column(id = true)
     private Integer id;
     private Integer channelId;
     private Integer appId;

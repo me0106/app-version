@@ -163,9 +163,9 @@ export default {
             });
 
             if (response.data.code === 200) {
-                this.tableList = response.data.data.records;
-                this.total = response.data.data.total;
-                this.currentPage = response.data.data.current;
+                this.tableList = response.data.data.content;
+                this.total = response.data.data.totalElements;
+                this.currentPage = response.data.data.number;
             } else {
                 this.$Notice.error({
                     title: '请求失败',

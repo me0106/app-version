@@ -1,11 +1,17 @@
 package com.tairanchina.csp.avm.entity;
 
 
+import io.mybatis.provider.Entity;
+
 /**
  * iOS版本
  * Created by hzlizx on 2018/6/6 0006
  */
+@Entity.Table
+
 public class IosVersion extends BasicEntity{
+
+    @Entity.Column(id = true)
     private Integer id;
     private Integer appId;
     private String appVersion;

@@ -6,7 +6,22 @@
 
     <select id="selectApkWithChannelCode" parameterType="java.lang.String"
             resultType="com.tairanchina.csp.avm.dto.ApkExt">
-        SELECT apk.*,c.channel_code,av.app_version AS version FROM apk
+        SELECT
+        apk.id AS id,
+        apk.channel_id AS channelId ,
+        apk.app_id AS appId,
+        apk.version_id AS versionId,
+        apk.md5 AS md5,
+        apk.oss_url AS ossUrl,
+        apk.delivery_status AS deliveryStatus,
+        apk.created_by AS createBy,
+        apk.created_time AS createTime,
+        apk.updated_by AS updateBy,
+        apk.updated_time AS updateTime,
+        apk.del_flag AS delFlag,
+        c.channel_code AS channelCode,
+        av.app_version AS version
+        FROM apk
         LEFT JOIN channel c ON apk.channel_id = c.id
         LEFT JOIN android_version av ON apk.version_id = av.id
         WHERE 1=1

@@ -1,8 +1,8 @@
 package com.tairanchina.csp.avm.service;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.RnRoute;
+import io.mybatis.mapper.example.Example;
 
 /**
  * Created by hzlizx on 2018/6/20 0020
@@ -37,7 +37,7 @@ public interface RnRouteService {
      * @param wrapper
      * @return
      */
-    ServiceResult list(int page, int pageSize, EntityWrapper<RnRoute> wrapper);
+    ServiceResult list(int page, int pageSize, Example<RnRoute> wrapper);
 
     /**
      * 根据ID查询

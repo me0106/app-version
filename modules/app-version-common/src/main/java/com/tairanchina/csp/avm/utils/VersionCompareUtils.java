@@ -1,7 +1,7 @@
 package com.tairanchina.csp.avm.utils;
 
 import com.tairanchina.csp.avm.exception.RegexMatchIllException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

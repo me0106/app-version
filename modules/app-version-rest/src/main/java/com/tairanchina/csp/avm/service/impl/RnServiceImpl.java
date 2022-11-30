@@ -1,7 +1,9 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.ecfront.dew.common.$;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.tairanchina.csp.avm.common.Json;
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.App;
@@ -13,13 +15,11 @@ import com.tairanchina.csp.avm.service.AppService;
 import com.tairanchina.csp.avm.service.RnService;
 import com.tairanchina.csp.avm.utils.VersionCompareUtils;
 import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import io.mybatis.mapper.example.Example;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by hzlizx on 2018/6/22 0022
@@ -44,19 +44,20 @@ public class RnServiceImpl implements RnService {
         if (appSelected == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;
         }
-        EntityWrapper<RnRoute> wrapper = new EntityWrapper<>();
+        Example<RnRoute> wrapper = new Example<>();
+        final Example.Criteria<RnRoute> criteria = wrapper.createCriteria();
+        criteria.andEqualTo(RnRoute::getAppId, appSelected.getId());
+        criteria.andEqualTo(RnRoute::getRouteStatus, routeStatus);
+        criteria.andEqualTo(RnRoute::getDelFlag, 0);
         if ("android".equals(platform)) {
-            wrapper.eq("android_enabled", 1);
+            criteria.andEqualTo(RnRoute::getAndroidEnabled, 1);
         } else if ("ios".equals(platform)) {
-            wrapper.eq("ios_enabled", 1);
+            criteria.andEqualTo(RnRoute::getIosEnabled, 1);
         } else {
             return ServiceResultConstants.PLATFORM_ERROR;
         }
-        wrapper.eq("del_flag", 0);
-        wrapper.orderBy("updated_time", false);
-        wrapper.eq("app_id", appSelected.getId());
-        wrapper.eq("route_status", routeStatus);
-        List<RnRoute> rnRoutes = rnRouteMapper.selectList(wrapper);
+        wrapper.orderByDesc(RnRoute::getCreatedTime);
+        List<RnRoute> rnRoutes = rnRouteMapper.selectByExample(wrapper);
 
         List<RnRoute> rnRoutesResult = new ArrayList<>();
         if ("ios".equalsIgnoreCase(platform)) {
@@ -65,7 +66,7 @@ public class RnServiceImpl implements RnService {
                     rnRoutesResult.add(r);
                 }
             }
-        } else if ("android".equalsIgnoreCase(platform)) {
+        } else {
             for (RnRoute r : rnRoutes) {
                 if (VersionCompareUtils.compareVersion(r.getAndroidMax(), version) > 0 && VersionCompareUtils.compareVersion(version, r.getAndroidMin()) >= 0) {
                     rnRoutesResult.add(r);
@@ -84,19 +85,20 @@ public class RnServiceImpl implements RnService {
         if (appSelected == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;
         }
-        ExtWrapper<RnPackage> wrapper = new ExtWrapper<>();
+        Example<RnPackage> example = new Example<>();
+        final Example.Criteria<RnPackage> wrapper = example.createCriteria();
         if ("android".equals(platform)) {
-            wrapper.eq("rn_type", 1);
+            wrapper.andEqualTo(RnPackage::getRnType, 1);
         } else if ("ios".equals(platform)) {
-            wrapper.eq("rn_type", 2);
+            wrapper.andEqualTo(RnPackage::getRnType, 2);
         } else {
             return ServiceResultConstants.PLATFORM_ERROR;
         }
-        wrapper.eq("del_flag", 0);
-        wrapper.setVersionSort("rn_version", false);
-        wrapper.eq("app_id", appSelected.getId());
-        wrapper.eq("rn_status", rnStatus);
-        List<RnPackage> rnPackages = rnPackageMapper.selectList(wrapper);
+        wrapper.andEqualTo(RnPackage::getDelFlag, 0);
+        ExtWrapper.orderByVersion(example,"rn_version");
+        wrapper.andEqualTo(RnPackage::getAppId, appSelected.getId());
+        wrapper.andEqualTo(RnPackage::getRnStatus, rnStatus);
+        List<RnPackage> rnPackages = rnPackageMapper.selectByExample(example);
 
         List<RnPackage> rnPackagesResult = new ArrayList<>();
         for (RnPackage r : rnPackages) {
@@ -104,7 +106,7 @@ public class RnServiceImpl implements RnService {
                 rnPackagesResult.add(r);
             }
         }
-        logger.debug("rnPackagesResult={}", $.json.toJsonString(rnPackagesResult));
+        logger.debug("rnPackagesResult={}", Json.toJsonString(rnPackagesResult));
         HashSet<String> set = new HashSet<>();
         List<HashMap<String, Object>> collect = rnPackagesResult.stream().filter(mapper -> !set.contains(mapper.getRnName())).map(mapper -> {
             HashMap<String, Object> map = new HashMap<>();

@@ -1,7 +1,7 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
+import java.util.ArrayList;
+
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.CustomApi;
@@ -11,11 +11,12 @@ import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.ChatBotService;
 import com.tairanchina.csp.avm.service.CustomApiService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
+import io.mybatis.mapper.example.Example;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Service
 public class CustomApiServiceImpl implements CustomApiService {
@@ -33,7 +34,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     public ServiceResult createCustomApi(CustomApi customApi) {
         customApi.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         customApi.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
-        Integer result = customApiMapper.insert(customApi);
+        int result = customApiMapper.insert(customApi);
         if (result > 0) {
             chatBotService.sendMarkdown(ChatBotEventType.CUSTOM_API_CREATED, "创建自定义接口提醒", makeMarkdown(customApi));
             return ServiceResult.ok(customApi);
@@ -53,7 +54,7 @@ public class CustomApiServiceImpl implements CustomApiService {
         }
         customApi.setUpdatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         customApi.setUpdatedTime(null);
-        Integer result = customApiMapper.updateById(customApi);
+        int result = customApiMapper.updateById(customApi);
         if (result > 0) {
             return ServiceResult.ok(customApi);
         } else {
@@ -73,7 +74,7 @@ public class CustomApiServiceImpl implements CustomApiService {
         customApi.setDelFlag(1);
         customApi.setUpdatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         customApi.setUpdatedTime(null);
-        Integer result = customApiMapper.updateById(customApi);
+        int result = customApiMapper.updateById(customApi);
         if (result > 0) {
             return ServiceResult.ok(customApi);
         } else {
@@ -90,7 +91,7 @@ public class CustomApiServiceImpl implements CustomApiService {
         if (!customApi.getAppId().equals(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())) {
             return ServiceResultConstants.RESOURCE_NOT_BELONG_APP;
         }
-        Integer result = customApiMapper.deleteById(id);
+        int result = customApiMapper.deleteById(id);
         if (result > 0) {
             return ServiceResult.ok(customApi);
         } else {
@@ -100,7 +101,7 @@ public class CustomApiServiceImpl implements CustomApiService {
 
     @Override
     public ServiceResult getCustomApiByOne(CustomApi customApi) {
-        CustomApi result = customApiMapper.selectOne(customApi);
+        CustomApi result = customApiMapper.selectOne(customApi).orElse(null);
         if (result == null) {
             return ServiceResultConstants.CUSTOM_API_NOT_EXISTS;
         }
@@ -116,7 +117,7 @@ public class CustomApiServiceImpl implements CustomApiService {
         customApi.setCustomKey(customKey);
         customApi.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         customApi.setDelFlag(0);
-        CustomApi result = customApiMapper.selectOne(customApi);
+        CustomApi result = customApiMapper.selectOne(customApi).orElse(null);
         if (result == null) {
             return ServiceResultConstants.CUSTOM_API_NOT_EXISTS;
         }
@@ -127,19 +128,16 @@ public class CustomApiServiceImpl implements CustomApiService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, EntityWrapper<CustomApi> wrapper) {
-        Page<CustomApi> pageEntity = new Page<>();
-        pageEntity.setSize(pageSize);
-        pageEntity.setCurrent(page);
-        pageEntity.setRecords(customApiMapper.selectPage(pageEntity, wrapper));
-        basicService.formatCreatedBy(pageEntity.getRecords());
-        return ServiceResult.ok(pageEntity);
+    public ServiceResult list(int page, int pageSize, Example<CustomApi> wrapper) {
+        final Page<CustomApi> customApis = customApiMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
+        basicService.formatCreatedBy(customApis);
+        return ServiceResult.ok(customApis);
     }
 
     private String makeMarkdown(CustomApi customApi) {
         StringBuilder sb = new StringBuilder();
-        sb.append("#### 发布了自定义接口[ " + customApi.getCustomName() + " ]\n\n");
-        sb.append("> **接口地址** ：" + customApi.getCustomKey() + "\n\n");
+        sb.append("#### 发布了自定义接口[ ").append(customApi.getCustomName()).append(" ]\n\n");
+        sb.append("> **接口地址** ：").append(customApi.getCustomKey()).append("\n\n");
 
         Integer customStatus = customApi.getCustomStatus();
         switch (customStatus) {

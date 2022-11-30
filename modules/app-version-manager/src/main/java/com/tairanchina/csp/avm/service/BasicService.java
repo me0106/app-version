@@ -19,7 +19,7 @@ public interface BasicService {
      *
      * @param source
      */
-    void formatCreatedBy(List<? extends BasicEntity> source);
+    void formatCreatedBy(Iterable<? extends BasicEntity> source);
 
 
     /**

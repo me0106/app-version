@@ -1,20 +1,21 @@
 package com.tairanchina.csp.avm.aspect;
 
-import com.ecfront.dew.common.$;
+import java.util.Objects;
+
+import com.tairanchina.csp.avm.annotation.OperationRecord;
+import com.tairanchina.csp.avm.common.Json;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.App;
 import com.tairanchina.csp.avm.entity.OperationRecordLog;
 import com.tairanchina.csp.avm.mapper.OperationRecordLogMapper;
-import com.tairanchina.csp.avm.annotation.OperationRecord;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Aspect
 @Component
@@ -32,13 +33,13 @@ public class OperationAspect {
         if (200 == serviceResult.getCode()) {
             if (null != serviceResult.getData()) {
                 logger.info("记录操作成功内容...");
-                String content = $.json.toJsonString(serviceResult.getData());
+                String content = Json.toJsonString(serviceResult.getData());
                 log.setOperationContent(content);
             }
             log.setOperationResult(OperationRecordLog.OperationResult.SUCCESS);
         } else if (200 != serviceResult.getCode()) {
             logger.info("记录操作失败内容...");
-            log.setOperationContent($.json.toJsonString(joinPoint.getArgs()));
+            log.setOperationContent(Json.toJsonString(joinPoint.getArgs()));
             log.setOperationResult(OperationRecordLog.OperationResult.FAILD);
         }
         String resultMessage = serviceResult.getMessage();

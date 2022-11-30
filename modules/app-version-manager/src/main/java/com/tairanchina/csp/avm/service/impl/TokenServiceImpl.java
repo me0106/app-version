@@ -1,10 +1,12 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.ecfront.dew.common.$;
+import com.tairanchina.csp.avm.common.Json;
 import com.tairanchina.csp.avm.dto.JWTSubject;
 import com.tairanchina.csp.avm.service.TokenService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -18,6 +20,8 @@ import java.util.Objects;
 @Service
 public class TokenServiceImpl implements TokenService {
 
+    private final Logger log = LoggerFactory.getLogger(TokenServiceImpl.class);
+
     private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     @Override
@@ -26,9 +30,9 @@ public class TokenServiceImpl implements TokenService {
             return null;
         }
         return Jwts.builder()
-                .setSubject($.json.toJsonString(subject))
-                .signWith(secretKey)
-                .compact();
+            .setSubject(Json.toJsonString(subject))
+            .signWith(secretKey)
+            .compact();
     }
 
     @Override
@@ -36,9 +40,9 @@ public class TokenServiceImpl implements TokenService {
         try {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt);
             String subject = claimsJws.getBody().getSubject();
-            return $.json.getMapper().readValue(subject, JWTSubject.class);
+            return Json.getMapper().readValue(subject, JWTSubject.class);
         } catch (JwtException | IOException e) {
-            e.printStackTrace();
+            log.info("Jwt解析失败:{},jwt={},", e.getMessage(), jwt);
             return null;
         }
     }

@@ -1,6 +1,5 @@
 package com.tairanchina.csp.avm.config;
 
-import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
@@ -11,14 +10,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class BeanConfig {
-
-    /**
-     * 分页插件
-     */
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
-    }
 
     @Bean
     public ObjectMapper objectMapper() {

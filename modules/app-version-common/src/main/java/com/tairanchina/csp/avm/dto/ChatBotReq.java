@@ -1,26 +1,25 @@
 package com.tairanchina.csp.avm.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Created by hzlizx on 2018/9/27 0027
  */
-@ApiModel(description = "钉钉机器人请求信息")
+@Schema(description = "钉钉机器人请求信息")
 public class ChatBotReq {
 
-    @ApiModelProperty("机器人名称")
+    @Schema(description = "机器人名称")
     private String name;
 
-    @ApiModelProperty("WebHook")
+    @Schema(description = "WebHook")
     private String webhook;
 
-    @ApiModelProperty("应用ID")
+    @Schema(description = "应用ID")
     private Integer appId;
 
-    @ApiModelProperty("事件列表")
+    @Schema(description = "事件列表")
     private List<String> events;
 
     public String getName() {

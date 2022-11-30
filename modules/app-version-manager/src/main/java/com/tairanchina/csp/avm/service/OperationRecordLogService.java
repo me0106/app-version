@@ -1,6 +1,5 @@
 package com.tairanchina.csp.avm.service;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.OperationRecordLog;
 
@@ -13,8 +12,6 @@ public interface OperationRecordLogService {
     ServiceResult deleteOperationRecordLogForever(Integer id);
 
     ServiceResult getOperationRecordLogById(Integer id);
-
-    ServiceResult list(int page, int pageSize, EntityWrapper<OperationRecordLog> wrapper);
 
     ServiceResult getListByQuery(int page,
                                  int pageSize,

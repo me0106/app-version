@@ -1,12 +1,16 @@
 package com.tairanchina.csp.avm.entity;
 
-import com.ecfront.dew.common.$;
+import com.tairanchina.csp.avm.common.Json;
+import io.mybatis.provider.Entity;
 
 /**
  * 当前登录用户的ID，APPID，以及是否为超级管理员
  * Created by hzlizx on 2018/5/17 0017
  */
+@Entity.Table
+
 public class LoginInfo {
+
     private Integer appId;
     private String userId;
     private String nickName;
@@ -68,6 +72,6 @@ public class LoginInfo {
 
     @Override
     public String toString() {
-        return $.json.toJsonString(this);
+        return Json.toJsonString(this);
     }
 }

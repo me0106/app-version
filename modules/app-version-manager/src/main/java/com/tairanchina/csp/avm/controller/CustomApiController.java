@@ -1,27 +1,27 @@
 package com.tairanchina.csp.avm.controller;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.tairanchina.csp.avm.annotation.OperationRecord;
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.CustomApiRequestDTO;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.CustomApi;
 import com.tairanchina.csp.avm.entity.OperationRecordLog;
-import com.tairanchina.csp.avm.annotation.OperationRecord;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.CustomApiService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
+import io.mybatis.mapper.example.Example;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-@Api(value = "/capi", tags = "自定义接口相关")
+@Tag(name = "自定义接口相关")
 @RestController
 @RequestMapping("/capi")
 public class CustomApiController {
@@ -32,44 +32,45 @@ public class CustomApiController {
     @Autowired
     private CustomApiService customApiService;
 
-    @ApiOperation(
-            value = "列出当前选择的APP内所有RN包（可分页，查询）",
-            notes = "列出当前选择的APP内所有RN包信息（可分页，查询）"
+    @Operation(
+        description = "列出当前选择的APP内所有RN包（可分页，查询）",
+        summary = "列出当前选择的APP内所有RN包信息（可分页，查询）"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
-            @ApiImplicitParam(name = "page", value = "页数", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示数据条数", defaultValue = "10"),
-            @ApiImplicitParam(name = "osType", value = "适用终端， ios / android"),
-            @ApiImplicitParam(name = "customName", value = "自定义接口名称"),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
+        @Parameter(name = "page", description = "页数", example = "1"),
+        @Parameter(name = "pageSize", description = "每页显示数据条数", example = "10"),
+        @Parameter(name = "osType", description = "适用终端， ios / android"),
+        @Parameter(name = "customName", description = "自定义接口名称"),
     })
     @GetMapping
     public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false) String osType,
                               @RequestParam(required = false) String customName) {
-        EntityWrapper<CustomApi> wrapper = new EntityWrapper<>();
-        wrapper.and().eq("app_id", ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
+        Example<CustomApi> example = new Example<>();
+        final Example.Criteria<CustomApi> wrapper = example.createCriteria();
+        wrapper.andEqualTo(CustomApi::getAppId, ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
 
         if ("android".equals(osType)) {
-            wrapper.andNew().eq("android_enabled", 1);
+            wrapper.andEqualTo(CustomApi::getAndroidEnabled, 1);
         } else if ("ios".equals(osType)) {
-            wrapper.andNew().eq("ios_enabled", 1);
+            wrapper.andEqualTo(CustomApi::getIosEnabled, 1);
         }
         if (StringUtils.isNotBlank(customName)) {
-            wrapper.andNew().like("custom_name", "%" + customName + "%");
+            wrapper.andLike(CustomApi::getCustomName, "%" + customName + "%");
         }
-        wrapper.andNew().eq("del_flag", 0);
-        wrapper.orderBy("created_time", false);
-        return customApiService.list(page, pageSize, wrapper);
+        wrapper.andEqualTo(CustomApi::getDelFlag, 0);
+        example.orderByDesc(CustomApi::getCreatedTime);
+        return customApiService.list(page, pageSize, example);
     }
 
-    @ApiOperation(
-            value = "根据自定义接口ID查找对应的自定义接口信息",
-            notes = "根据ID查找对应的自定义接口信息"
+    @Operation(
+        description = "根据自定义接口ID查找对应的自定义接口信息",
+        summary = "根据ID查找对应的自定义接口信息"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{id}")
     public ServiceResult findCustomApi(@PathVariable Integer id) {
@@ -78,12 +79,12 @@ public class CustomApiController {
         return customApiService.getCustomApiByOne(customApi);
     }
 
-    @ApiOperation(
-            value = "添加自定义接口",
-            notes = "添加自定义接口"
+    @Operation(
+        description = "添加自定义接口",
+        summary = "添加自定义接口"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PostMapping("/add")
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.CUSTOM_API, description = OperationRecordLog.OperationDescription.CREATE_CUSTOM_API)
@@ -103,12 +104,12 @@ public class CustomApiController {
         return customApiService.createCustomApi(customApi);
     }
 
-    @ApiOperation(
-            value = "编辑自定义接口",
-            notes = "修改自定义接口"
+    @Operation(
+        description = "编辑自定义接口",
+        summary = "修改自定义接口"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PutMapping("/update/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.CUSTOM_API, description = OperationRecordLog.OperationDescription.UPDATE_CUSTOM_API)
@@ -134,12 +135,12 @@ public class CustomApiController {
      * @param id
      * @return
      */
-    @ApiOperation(
-            value = "删除自定义接口（硬删）",
-            notes = "删除自定义接口"
+    @Operation(
+        description = "删除自定义接口（硬删）",
+        summary = "删除自定义接口"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE_FOREVER, resource = OperationRecordLog.OperationResource.CUSTOM_API, description = OperationRecordLog.OperationDescription.DELETE_FOREVER_CUSTOM_API)
@@ -154,12 +155,12 @@ public class CustomApiController {
      * @return
      */
 
-    @ApiOperation(
-            value = "删除自定义接口（软删）",
-            notes = "删除自定义接口"
+    @Operation(
+        description = "删除自定义接口（软删）",
+        summary = "删除自定义接口"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @PutMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.CUSTOM_API, description = OperationRecordLog.OperationDescription.DELETE_CUSTOM_API)

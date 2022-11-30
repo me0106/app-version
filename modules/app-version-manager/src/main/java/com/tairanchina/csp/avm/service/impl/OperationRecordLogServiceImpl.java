@@ -1,7 +1,5 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.OperationRecordLogExt;
 import com.tairanchina.csp.avm.dto.ServiceResult;
@@ -11,9 +9,11 @@ import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.OperationRecordLogService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import static com.tairanchina.csp.avm.mapper.OperationRecordLogMapper.*;
 
 @Service
 public class OperationRecordLogServiceImpl implements OperationRecordLogService {
@@ -59,7 +59,7 @@ public class OperationRecordLogServiceImpl implements OperationRecordLogService 
         if (null == operationRecordLog) {
             return ServiceResultConstants.OPERATION_LOG_NOT_EXISTS;
         }
-        int result = operationRecordLogMapper.deleteById(operationRecordLog);
+        int result = operationRecordLogMapper.deleteById(operationRecordLog.getId());
         if (result > 0) {
             return ServiceResult.ok(operationRecordLog);
         } else {
@@ -73,24 +73,13 @@ public class OperationRecordLogServiceImpl implements OperationRecordLogService 
         return ServiceResult.ok(operationRecordLog);
     }
 
-    @Override
-    public ServiceResult list(int page, int pageSize, EntityWrapper<OperationRecordLog> wrapper) {
-        Page<OperationRecordLog> pageEntity = new Page<>();
-        pageEntity.setSize(pageSize);
-        pageEntity.setCurrent(page);
-        pageEntity.setRecords(operationRecordLogMapper.selectPage(pageEntity, wrapper));
-        basicService.formatCreatedBy(pageEntity.getRecords());
-        return ServiceResult.ok(pageEntity);
-    }
 
     @Override
-    public ServiceResult getListByQuery(int page, int pageSize, String phone, String nickName, Integer appId, String operationResource, String operationDescription, String operationType, String startDate, String endDate) {
-        Page<OperationRecordLogExt> logPage = new Page<>();
-        logPage.setCurrent(page);
-        logPage.setSize(pageSize);
-        List<OperationRecordLogExt> list = operationRecordLogMapper.selectLogExtByQuery(logPage, phone, nickName, appId, operationResource, operationDescription, operationType, startDate, endDate);
-        logPage.setRecords(list);
-        return ServiceResult.ok(logPage);
+    public ServiceResult getListByQuery(int page, int pageSize, String phone, String nickName, Integer appId, String operationResource, String operationDescription, String operationType,
+                                        String startDate, String endDate) {
+        final Query query = new Query(phone, nickName, appId, operationResource, operationDescription, operationType, startDate, endDate);
+        Page<OperationRecordLogExt> list = operationRecordLogMapper.selectLogExtByQuery(PageRequest.of(page, pageSize), query);
+        return ServiceResult.ok(list);
     }
 
 

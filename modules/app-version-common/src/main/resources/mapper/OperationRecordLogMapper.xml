@@ -4,10 +4,60 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tairanchina.csp.avm.mapper.OperationRecordLogMapper">
 
-    <select id="selectLogExtByQuery" parameterType="java.lang.String"
-            resultType="com.tairanchina.csp.avm.dto.OperationRecordLogExt">
+    <select id="selectLogExtByQueryWithOffset" resultType="com.tairanchina.csp.avm.dto.OperationRecordLogExt">
         SELECT
-        l.*, u.phone, u.nick_name
+        l.id,
+        l.operator,
+        l.app_id AS appId,
+        l.operation_resource AS operationResource,
+        l.operation_type AS operationType,
+        l.operation_description AS operationDescription,
+        l.operation_content AS operationContent,
+        l.operation_result AS operationResult,
+        l.result_message AS resultMessage,
+        l.created_by AS createBy,
+        l.created_time AS createTime,
+        l.updated_by AS updateBy,
+        l.updated_time AS updateTime,
+        l.del_flag AS delFlag,
+        u.phone,
+        u.nick_name AS nickName
+        FROM
+        operation_record_log l
+        LEFT JOIN `user` u
+        ON l.created_by = u.user_id
+        WHERE 1=1
+        <if test="query.phone != null and query.phone != ''">
+            AND u.phone LIKE "%"#{query.phone,jdbcType=VARCHAR}"%"
+        </if>
+        <if test="query.nickName != null and query.nickName != ''">
+            AND u.nick_name LIKE "%"#{query.nickName,jdbcType=VARCHAR}"%"
+        </if>
+        <if test="query.appId != null and query.appId!= ''">
+            AND l.app_id = #{query.appId,jdbcType=INTEGER}
+        </if>
+        <if test="query.operationResource != null and query.operationResource != ''">
+            AND l.operation_resource = #{query.operationResource,jdbcType=VARCHAR}
+        </if>
+        <if test="query.operationDescription != null and query.operationDescription != ''">
+            AND l.operation_description = #{query.operationDescription,jdbcType=VARCHAR}
+        </if>
+        <if test="query.operationType != null and query.operationResource != ''">
+            AND l.operation_type = #{query.operationType,jdbcType=VARCHAR}
+        </if>
+        <if test="query.startDate != null and query.startDate != '' ">
+            AND l.created_time >= #{query.startDate,jdbcType=VARCHAR}
+        </if>
+        <if test="query.endDate != null and query.endDate != ''">
+            AND l.created_time &lt;= #{query.endDate,jdbcType=VARCHAR}
+        </if>
+        AND l.del_flag = 0
+        ORDER BY created_time DESC LIMIT #{offset},#{size}
+    </select>
+    <select id="countLogExtByQuery" resultType="long"
+            parameterType="com.tairanchina.csp.avm.mapper.OperationRecordLogMapper$Query">
+        SELECT
+        COUNT(*)
         FROM
         operation_record_log l
         LEFT JOIN `user` u
@@ -38,7 +88,6 @@
             AND l.created_time &lt;= #{endDate,jdbcType=VARCHAR}
         </if>
         AND l.del_flag = 0
-        ORDER BY created_time DESC
     </select>
 
 </mapper>

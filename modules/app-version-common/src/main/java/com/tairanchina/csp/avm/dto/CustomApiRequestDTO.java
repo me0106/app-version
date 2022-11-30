@@ -1,33 +1,32 @@
 package com.tairanchina.csp.avm.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-
-import javax.validation.constraints.Pattern;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Pattern;
 
 public class CustomApiRequestDTO {
 
-//    @ApiModelProperty(value = "主键ID，非必填，可能部分编辑操作时需要")
+//    @Schema(description= "主键ID，非必填，可能部分编辑操作时需要")
 //    private String id;
-    @ApiModelProperty(value = "自定义接口名称")
+    @Schema(description= "自定义接口名称")
     private String customName;
-    @ApiModelProperty(value = "是否适用于IOS")
+    @Schema(description= "是否适用于IOS")
     private Integer iosEnabled;
-    @ApiModelProperty(value = "是否适用于Android")
+    @Schema(description= "是否适用于Android")
     private Integer androidEnabled;
-    @ApiModelProperty(value = "自定义接口内容，json格式")
+    @Schema(description= "自定义接口内容，json格式")
     private String customContent;
     @Pattern(regexp = "^[0-9a-zA-Z_]+$", message = "customKey格式不正确")
-    @ApiModelProperty(value = "自定义接口的key,正则：^[0-9a-zA-Z_]+$ ")
+    @Schema(description= "自定义接口的key,正则：^[0-9a-zA-Z_]+$ ")
     private String customKey;
-    @ApiModelProperty(value = "自定义接口状态， 0:关闭 1:线上开启 2:测试需要")
+    @Schema(description= "自定义接口状态， 0:关闭 1:线上开启 2:测试需要")
     private Integer customStatus;
-    @ApiModelProperty(value = "自定义接口支持的ios最小版本")
+    @Schema(description= "自定义接口支持的ios最小版本")
     private String iosMin;
-    @ApiModelProperty(value = "自定义接口支持的ios最大版本")
+    @Schema(description= "自定义接口支持的ios最大版本")
     private String iosMax;
-    @ApiModelProperty(value = "自定义接口支持的android最小版本")
+    @Schema(description= "自定义接口支持的android最小版本")
     private String androidMin;
-    @ApiModelProperty(value = "自定义接口支持的android最大版本")
+    @Schema(description= "自定义接口支持的android最大版本")
     private String androidMax;
 
     public Integer getCustomStatus() {

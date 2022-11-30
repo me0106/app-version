@@ -1,8 +1,8 @@
 package com.tairanchina.csp.avm.service;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.Apk;
+import io.mybatis.mapper.example.Example;
 
 /**
  * Created by hzlizx on 2018/6/14 0014
@@ -11,7 +11,7 @@ public interface ApkService {
 
     ServiceResult create(Apk apk);
 
-    ServiceResult list(int page, int pageSize, EntityWrapper<Apk> wrapper, int versionId);
+    ServiceResult list(int page, int pageSize, Example<Apk> wrapper, int versionId);
 
     ServiceResult delivery(int apkId);
 

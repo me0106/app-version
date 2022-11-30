@@ -1,7 +1,12 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.ecfront.dew.common.$;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.tairanchina.csp.avm.common.Json;
 import com.tairanchina.csp.avm.constants.ServiceResultConstants;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.AndroidVersion;
@@ -11,24 +16,19 @@ import com.tairanchina.csp.avm.entity.Channel;
 import com.tairanchina.csp.avm.mapper.AndroidVersionMapper;
 import com.tairanchina.csp.avm.mapper.ApkMapper;
 import com.tairanchina.csp.avm.mapper.ChannelMapper;
-import com.tairanchina.csp.avm.utils.VersionCompareUtils;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
 import com.tairanchina.csp.avm.service.AndroidVersionService;
 import com.tairanchina.csp.avm.service.AppService;
-import org.apache.commons.lang.StringUtils;
+import com.tairanchina.csp.avm.utils.VersionCompareUtils;
+import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import io.mybatis.mapper.example.ExampleWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by hzlizx on 2018/6/21 0021
@@ -57,20 +57,18 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
             return ServiceResultConstants.APP_NOT_EXISTS;
         }
         logger.debug("找到应用:{}", appSelected.getAppName());
-
-        ExtWrapper<AndroidVersion> androidVersionEntityWrapper = new ExtWrapper<>();
-        androidVersionEntityWrapper.and().eq("app_id", appSelected.getId());
-        androidVersionEntityWrapper.and().eq("del_flag", 0);
-        androidVersionEntityWrapper.and().eq("version_status", 1);
-        androidVersionEntityWrapper.setVersionSort("app_version", false);
-        List<AndroidVersion> androidVersions = androidVersionMapper.selectList(androidVersionEntityWrapper);
+        final ExampleWrapper<AndroidVersion, Integer> wrapper = androidVersionMapper.wrapper()
+            .eq(AndroidVersion::getAppId, appSelected.getId())
+            .eq(AndroidVersion::getDelFlag, 0)
+            .eq(AndroidVersion::getVersionStatus, 1);
+        ExtWrapper.orderByVersion(wrapper, "app_version");
+        List<AndroidVersion> androidVersions = wrapper.list();
         if (androidVersions.isEmpty()) {
             logger.debug("查询不到新版本或者新版本未上架，当前版本为最新");
             return ServiceResultConstants.NO_NEW_VERSION;
         }
         // 将查询结果再次进行筛选，选出大于传入version的安卓版本，然后再找出最新版本
-        List<AndroidVersion> androidVersionsResult = new LinkedList<>();
-        androidVersionsResult.addAll(androidVersions);
+        List<AndroidVersion> androidVersionsResult = new LinkedList<>(androidVersions);
         if (VersionCompareUtils.compareVersion(version, androidVersions.get(androidVersions.size() - 1).getAppVersion()) > 0) {
             Collections.reverse(androidVersions);
             for (AndroidVersion a : androidVersions) {
@@ -89,12 +87,9 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
 
         //查找指定渠道
         logger.debug("查询channelCode为{}的渠道...", channelCode);
-        Channel channel = new Channel();
-        channel.setAppId(appSelected.getId());
-        channel.setChannelCode(channelCode);
-        channel.setDelFlag(0);
-        channel.setChannelStatus(1);
-        List<Channel> channels = channelMapper.selectList(new EntityWrapper<>(channel));
+        List<Channel> channels = channelMapper.wrapper().eq(Channel::getAppId, appSelected.getId()).eq(Channel::getChannelCode, channelCode)
+            .eq(Channel::getDelFlag, 0)
+            .eq(Channel::getChannelStatus, 0).list();
         Channel channelSelected = null;
         if (!channels.isEmpty()) {
             channelSelected = channels.get(0);
@@ -102,12 +97,10 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
         }
 
         //查找官方渠道
-        Channel channelOfficial = new Channel();
-        channelOfficial.setAppId(appSelected.getId());
-        channelOfficial.setChannelCode("official");
-        channelOfficial.setDelFlag(0);
-        channelOfficial.setChannelStatus(1);
-        List<Channel> officialChannels = channelMapper.selectList(new EntityWrapper<>(channelOfficial));
+        List<Channel> officialChannels = channelMapper.wrapper().eq(Channel::getAppId, appSelected.getId())
+            .eq(Channel::getChannelCode, "official")
+            .eq(Channel::getDelFlag, 0)
+            .eq(Channel::getChannelStatus, 1).list();
         Channel officialChannel = null;
         if (!officialChannels.isEmpty()) {
             officialChannel = officialChannels.get(0);
@@ -119,7 +112,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
                 if (channelSelected.getChannelStatus() == 1) {
                     HashMap<String, Object> apk = this.findApk(androidVersion, appSelected.getId(), channelSelected.getId());
                     if (apk != null) {
-                        logger.debug("结果：{}", $.json.toJsonString(apk));
+                        logger.debug("结果：{}", Json.toJsonString(apk));
                         return ServiceResult.ok(apk);
                     }
                 }
@@ -127,7 +120,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
             if (officialChannel != null) {
                 HashMap<String, Object> apk = this.findApk(androidVersion, appSelected.getId(), officialChannel.getId());
                 if (apk != null) {
-                    logger.debug("结果：{}", $.json.toJsonString(apk));
+                    logger.debug("结果：{}", Json.toJsonString(apk));
                     return ServiceResult.ok(apk);
                 }
             }
@@ -154,13 +147,12 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
         }
         logger.debug("找到应用:{}", appSelected.getAppName());
 
-        //查出最新版本
-        ExtWrapper<AndroidVersion> androidVersionEntityWrapper = new ExtWrapper<>();
-        androidVersionEntityWrapper.and().eq("app_id", appSelected.getId());
-        androidVersionEntityWrapper.and().eq("del_flag", 0);
-        androidVersionEntityWrapper.and().eq("version_status", 1);
-        androidVersionEntityWrapper.setVersionSort("app_version", false);
-        List<AndroidVersion> androidVersions = androidVersionMapper.selectList(androidVersionEntityWrapper);
+        final ExampleWrapper<AndroidVersion, Integer> wrapper = androidVersionMapper.wrapper();
+        wrapper.eq(AndroidVersion::getAppId, appSelected.getId())
+            .eq(AndroidVersion::getDelFlag, 0)
+            .eq(AndroidVersion::getVersionStatus, 1);
+        ExtWrapper.orderByVersion(wrapper, "app_version");
+        List<AndroidVersion> androidVersions = wrapper.list();
         logger.debug("查询到的版本：");
         androidVersions.forEach(androidVersion -> logger.debug(androidVersion.getAppVersion()));
         if (androidVersions.isEmpty()) {
@@ -179,7 +171,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
         }
         channel.setDelFlag(0);
         channel.setChannelStatus(1);
-        List<Channel> channels = channelMapper.selectList(new EntityWrapper<>(channel));
+        List<Channel> channels = channelMapper.selectList(channel);
         if (channels.isEmpty()) {
             return ServiceResultConstants.APK_CHANNEL_NOT_EXISTS;
         }
@@ -191,7 +183,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
             apk.setVersionId(androidVersion.getId());
             apk.setDelFlag(0);
             apk.setDeliveryStatus(1);
-            List<Apk> apks = apkMapper.selectList(new EntityWrapper<>(apk));
+            List<Apk> apks = apkMapper.selectList(apk);
             if (!apks.isEmpty()) {
                 try {
                     HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
@@ -217,7 +209,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
             apk.setVersionId(versionId);
             apk.setDelFlag(0);
             apk.setDeliveryStatus(1);
-            List<Apk> apks = apkMapper.selectList(new EntityWrapper<>(apk));
+            List<Apk> apks = apkMapper.selectList(apk);
 
             if (!apks.isEmpty()) {
                 Apk apkSelected = apks.get(0);
@@ -242,7 +234,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
         apk.setVersionId(versionId);
         apk.setDelFlag(0);
         apk.setDeliveryStatus(1);
-        List<Apk> apks = apkMapper.selectList(new EntityWrapper<>(apk));
+        List<Apk> apks = apkMapper.selectList(apk);
         if (!apks.isEmpty()) {
             Apk apkSelected = apks.get(0);
             logger.debug("找到APK，开始组装返回值...");

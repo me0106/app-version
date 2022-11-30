@@ -1,9 +1,11 @@
 package com.tairanchina.csp.avm.entity;
 
-import com.ecfront.dew.common.$;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.tairanchina.csp.avm.common.Json;
+import io.mybatis.provider.Entity;
 
 /**
  * Created by hzlizx on 2018/6/11 0011
@@ -12,10 +14,12 @@ public class BasicEntity implements Serializable {
 
     private String createdBy;
 
+    @Entity.Column(insertable = false,updatable = false)
     private Date createdTime;
 
     private String updatedBy;
 
+    @Entity.Column(insertable = false,updatable = false)
     private Date updatedTime;
 
     public String getUpdatedBy() {
@@ -52,6 +56,6 @@ public class BasicEntity implements Serializable {
 
     @Override
     public String toString() {
-        return $.json.toJsonString(this);
+        return Json.toJsonString(this);
     }
 }

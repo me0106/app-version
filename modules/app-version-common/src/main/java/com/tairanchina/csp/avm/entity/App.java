@@ -1,17 +1,22 @@
 package com.tairanchina.csp.avm.entity;
 
 
-import io.swagger.annotations.ApiModelProperty;
+import io.mybatis.provider.Entity;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 应用
  * Created by hzlizx on 2018/6/6 0006
  */
+@Entity.Table
 public class App extends BasicEntity {
+
+    @Entity.Column(id = true)
+
     private Integer id;
-    @ApiModelProperty(value = "APP名称，应用名")
+    @Schema(description = "APP名称，应用名")
     private String appName;
-    @ApiModelProperty(value = "appId,应用ID，请和用户中心的应用ID保持一致，eg: uc28ec7f8870a6e785 ")
+    @Schema(description = "appId,应用ID，请和用户中心的应用ID保持一致，eg: uc28ec7f8870a6e785 ")
     private String tenantAppId;
     private Integer delFlag;
 

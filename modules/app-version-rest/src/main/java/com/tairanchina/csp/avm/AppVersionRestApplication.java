@@ -1,17 +1,14 @@
 package com.tairanchina.csp.avm;
 
-import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
+import jakarta.annotation.PostConstruct;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import javax.annotation.PostConstruct;
 
 @SpringBootApplication
 @EnableScheduling
@@ -22,13 +19,6 @@ public class AppVersionRestApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(AppVersionRestApplication.class);
 
-    /**
-     * 分页插件
-     */
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
-    }
 
     @PostConstruct
     void started() {

@@ -1,26 +1,23 @@
 package com.tairanchina.csp.avm.service.impl;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.tairanchina.csp.avm.constants.ServiceResultConstants;
-import com.tairanchina.csp.avm.dto.ServiceResult;
-import com.tairanchina.csp.avm.dto.VersionInfo;
-import com.tairanchina.csp.avm.entity.*;
-import com.tairanchina.csp.avm.mapper.UserMapper;
-import com.tairanchina.csp.avm.utils.StringUtilsExt;
-import com.tairanchina.csp.avm.utils.VersionCompareUtils;
-import com.tairanchina.csp.avm.service.BasicService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.tairanchina.csp.avm.constants.ServiceResultConstants;
+import com.tairanchina.csp.avm.dto.ServiceResult;
+import com.tairanchina.csp.avm.dto.VersionInfo;
+import com.tairanchina.csp.avm.entity.*;
+import com.tairanchina.csp.avm.mapper.UserMapper;
+import com.tairanchina.csp.avm.service.BasicService;
+import com.tairanchina.csp.avm.utils.StringUtilsExt;
+import com.tairanchina.csp.avm.utils.VersionCompareUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by hzlizx on 2018/6/11 0011
@@ -32,7 +29,7 @@ public class BasicServiceImpl implements BasicService {
     private UserMapper userMapper;
 
     @Override
-    public void formatCreatedBy(List<? extends BasicEntity> source) {
+    public void formatCreatedBy(Iterable<? extends BasicEntity> source) {
         source.forEach(this::formatCreatedBy);
     }
 
@@ -42,7 +39,7 @@ public class BasicServiceImpl implements BasicService {
         if (StringUtils.isNotBlank(createdBy)) {
             User user = new User();
             user.setUserId(createdBy);
-            List<User> users = userMapper.selectList(new EntityWrapper<>(user));
+            List<User> users = userMapper.selectList(user);
             if (!users.isEmpty()) {
                 basicEntity.setCreatedBy(users.get(0).getPhone());
             }

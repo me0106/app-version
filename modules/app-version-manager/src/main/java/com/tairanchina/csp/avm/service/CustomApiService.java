@@ -1,8 +1,8 @@
 package com.tairanchina.csp.avm.service;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.CustomApi;
+import io.mybatis.mapper.example.Example;
 
 public interface CustomApiService {
 
@@ -13,6 +13,7 @@ public interface CustomApiService {
 
     /**
      * 软删
+     *
      * @param id
      * @return
      */
@@ -20,6 +21,7 @@ public interface CustomApiService {
 
     /**
      * 硬删
+     *
      * @param id
      * @return
      */
@@ -29,6 +31,6 @@ public interface CustomApiService {
 
     ServiceResult getCustomApiByKeyAndAppId(String customKey);
 
-    ServiceResult list(int page, int pageSize, EntityWrapper<CustomApi> wrapper);
+    ServiceResult list(int page, int pageSize, Example<CustomApi> wrapper);
 
 }

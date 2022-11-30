@@ -3,17 +3,18 @@ package com.tairanchina.csp.avm.controller;
 import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.OperationRecordLog;
 import com.tairanchina.csp.avm.service.OperationRecordLogService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(value = "/log", tags = "操作日志相关接口")
+@Tag(name = "操作日志相关接口")
 @RestController
 @RequestMapping("/log")
 public class OperationRecordLogController {
@@ -22,33 +23,33 @@ public class OperationRecordLogController {
     OperationRecordLogService operationRecordLogService;
 
 
-    @ApiOperation(
-            value = "根据操作日志ID查询单条操作日志信息",
-            notes = "根据操作日志ID查询单条操作日志信息"
+    @Operation(
+        description = "根据操作日志ID查询单条操作日志信息",
+        summary = "根据操作日志ID查询单条操作日志信息"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
-            @ApiImplicitParam(name = "id", value = "操作日志id"),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
+        @Parameter(name = "id", description = "操作日志id"),
     })
     @GetMapping("/{id}")
     public ServiceResult getOperationRecordLog(@PathVariable Integer id) {
         return operationRecordLogService.getOperationRecordLogById(id);
     }
 
-    @ApiOperation(
-            value = "列出全部操作日志（可分页，查询）",
-            notes = "列出全部操作日志（可分页，查询）"
+    @Operation(
+        summary = "列出全部操作日志（可分页，查询）",
+        description = "列出全部操作日志（可分页，查询）"
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
-            @ApiImplicitParam(name = "page", value = "页数", defaultValue = "1"),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示数据条数", defaultValue = "10"),
-            @ApiImplicitParam(name = "operationType", value = "操作描述，这里的操作类型实际为操作描述（中文的），是根据操作资源查对应的操作类型查出来的"),
-            @ApiImplicitParam(name = "appId", value = "appId，int型的"),
-            @ApiImplicitParam(name = "phone", value = "手机号"),
-            @ApiImplicitParam(name = "nickName", value = "用户昵称"),
-            @ApiImplicitParam(name = "startDate", value = "查询开始时间"),
-            @ApiImplicitParam(name = "endDate", value = "查询结束时间"),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
+        @Parameter(name = "page", description = "页数", example = "1"),
+        @Parameter(name = "pageSize", description = "每页显示数据条数", example = "10"),
+        @Parameter(name = "operationType", description = "操作描述，这里的操作类型实际为操作描述（中文的），是根据操作资源查对应的操作类型查出来的"),
+        @Parameter(name = "appId", description = "appId，int型的"),
+        @Parameter(name = "phone", description = "手机号"),
+        @Parameter(name = "nickName", description = "用户昵称"),
+        @Parameter(name = "startDate", description = "查询开始时间"),
+        @Parameter(name = "endDate", description = "查询结束时间"),
     })
     @GetMapping
     public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
@@ -76,13 +77,13 @@ public class OperationRecordLogController {
         return operationRecordLogService.deleteOperationRecordLogForever(id);
     }
 
-    @ApiOperation(
-            value = "操作类型显示",
-            notes = "详细接口说明：https://doc.trc.com/#/module/BB4C6A2C8B654BB096519D35C667585F/service/DEE2FECC554B40D3A50525C9386F39B1 "
+    @Operation(
+        summary = "操作类型显示",
+        description = "详细接口说明：https://doc.trc.com/#/module/BB4C6A2C8B654BB096519D35C667585F/service/DEE2FECC554B40D3A50525C9386F39B1 "
     )
     @GetMapping("/type")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     public ServiceResult getOperationType() {
         Map<Enum, String> typeMap = new HashMap<>();
@@ -92,12 +93,12 @@ public class OperationRecordLogController {
         return ServiceResult.ok(typeMap);
     }
 
-    @ApiOperation(
-            value = "操作资源显示",
-            notes = "详细接口说明：https://doc.trc.com/#/module/BB4C6A2C8B654BB096519D35C667585F/service/3857DF13437A41E08FA1B6B17756574F "
+    @Operation(
+        summary = "操作资源显示",
+        description = "详细接口说明：https://doc.trc.com/#/module/BB4C6A2C8B654BB096519D35C667585F/service/3857DF13437A41E08FA1B6B17756574F "
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/resource")
     public ServiceResult getOperationResource() {
@@ -108,12 +109,12 @@ public class OperationRecordLogController {
         return ServiceResult.ok(resourceMap);
     }
 
-    @ApiOperation(
-            value = "根据操作资源显示操作类型",
-            notes = "详细接口说明：https://doc.trc.com/#/module/BB4C6A2C8B654BB096519D35C667585F/service/56A3F4A40B094CA3A77D38AF33032E3B "
+    @Operation(
+        summary = "根据操作资源显示操作类型",
+        description = "详细接口说明：https://doc.trc.com/#/module/BB4C6A2C8B654BB096519D35C667585F/service/56A3F4A40B094CA3A77D38AF33032E3B "
     )
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Authorization", value = "用户登录凭证", paramType = "header", dataType = "string", defaultValue = "Bearer ", required = true),
+    @Parameters({
+        @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{resource}/type")
     public ServiceResult getOperationResourceType(@PathVariable String resource) {
