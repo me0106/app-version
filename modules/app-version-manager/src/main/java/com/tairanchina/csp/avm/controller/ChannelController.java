@@ -29,7 +29,7 @@ public class ChannelController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping
-    public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false, defaultValue = "") String channelName,
                               @RequestParam(required = false, defaultValue = "") String channelCode,
@@ -56,7 +56,7 @@ public class ChannelController {
     })
     @PostMapping
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.CHANNEL, description = OperationRecordLog.OperationDescription.CREATE_CHANNEL)
-    public ServiceResult create(@RequestBody Channel channel) {
+    public ServiceResult<?> create(@RequestBody Channel channel) {
         if (StringUtils.isEmpty(channel.getChannelName()) || StringUtils.isEmpty(channel.getChannelCode())) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -74,7 +74,7 @@ public class ChannelController {
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.CHANNEL, description = OperationRecordLog.OperationDescription.DELETE_CHANNEL)
-    public ServiceResult delete(@PathVariable int id) {
+    public ServiceResult<?> delete(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -86,7 +86,7 @@ public class ChannelController {
     })
     @PutMapping("/{id}/scrap")
     @OperationRecord(type = OperationRecordLog.OperationType.SCRAP, resource = OperationRecordLog.OperationResource.CHANNEL, description = OperationRecordLog.OperationDescription.SCRAP_CHANNEL)
-    public ServiceResult scrap(@PathVariable int id) {
+    public ServiceResult<?> scrap(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -98,7 +98,7 @@ public class ChannelController {
     })
     @PutMapping("/{id}/open")
     @OperationRecord(type = OperationRecordLog.OperationType.OPEN, resource = OperationRecordLog.OperationResource.CHANNEL, description = OperationRecordLog.OperationDescription.OPEN_CHANNEL)
-    public ServiceResult open(@PathVariable int id) {
+    public ServiceResult<?> open(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -110,7 +110,7 @@ public class ChannelController {
     })
     @PutMapping("/{id}/edit")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.CHANNEL, description = OperationRecordLog.OperationDescription.UPDATE_CHANNEL)
-    public ServiceResult edit(@PathVariable int id, @RequestBody Channel channel) {
+    public ServiceResult<?> edit(@PathVariable int id, @RequestBody Channel channel) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -122,7 +122,7 @@ public class ChannelController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{id}")
-    public ServiceResult find(@PathVariable int id) {
+    public ServiceResult<?> find(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }

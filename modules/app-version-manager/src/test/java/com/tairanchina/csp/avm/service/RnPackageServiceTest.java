@@ -31,9 +31,9 @@
 //        rnPackage.setRnNickName("nickname");
 //        rnPackage.setRnVersion("rnversion");
 //        rnPackage.setRnUpdateLog("log");
-////        ServiceResult serviceResult = basicService.checkVersion(rnPackage);
+////        ServiceResult<?> serviceResult = basicService.checkVersion(rnPackage);
 //
-//        ServiceResult result = rnPackageService.create(rnPackage);
+//        ServiceResult<?> result = rnPackageService.create(rnPackage);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -43,7 +43,7 @@
 //    @Test
 //    public void delete() throws Exception {
 //        Integer id = 17;
-//        ServiceResult result = rnPackageService.delete(id);
+//        ServiceResult<?> result = rnPackageService.delete(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -66,7 +66,7 @@
 //        rnPackage.setRnNickName("nickname");
 //        rnPackage.setRnVersion("rnversion");
 //        rnPackage.setRnUpdateLog("log");
-//        ServiceResult result = rnPackageService.update(rnPackage);
+//        ServiceResult<?> result = rnPackageService.update(rnPackage);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -116,7 +116,7 @@
 //        }
 //
 //        wrapper.orderBy("created_time", false);
-//        ServiceResult result = rnPackageService.list(1, 10, wrapper);
+//        ServiceResult<?> result = rnPackageService.list(1, 10, wrapper);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -125,7 +125,7 @@
 //    @Test
 //    public void find() throws Exception {
 //        Integer id = 17;
-//        ServiceResult result = rnPackageService.find(id);
+//        ServiceResult<?> result = rnPackageService.find(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

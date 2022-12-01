@@ -50,7 +50,7 @@ public class RnRouteController {
         @Parameter(name = "routeStatus", description = "RN路由状态，0:关闭 1:线上开启 2:测试需要"),
     })
     @GetMapping
-    public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false, defaultValue = "") String routeName,
                               @RequestParam(required = false, defaultValue = "") String routeKey,
@@ -82,7 +82,7 @@ public class RnRouteController {
     })
     @PostMapping
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.RN_ROUTE, description = OperationRecordLog.OperationDescription.CREATE_RN_ROUTE)
-    public ServiceResult create(@RequestBody RnRouteRequestDTO rnRouteRequestDTO) {
+    public ServiceResult<?> create(@RequestBody RnRouteRequestDTO rnRouteRequestDTO) {
         if (StringUtilsExt.hasBlank(
             rnRouteRequestDTO.getRouteName(),
             rnRouteRequestDTO.getRouteKey(),
@@ -91,7 +91,7 @@ public class RnRouteController {
             return ServiceResultConstants.NEED_PARAMS;
         }
         //校验版本区间
-        ServiceResult serviceResult = basicService.checkVersion(rnRouteRequestDTO);
+        ServiceResult<?> serviceResult = basicService.checkVersion(rnRouteRequestDTO);
         if (serviceResult.getCode() != 200) {
             return serviceResult;
         }
@@ -105,12 +105,12 @@ public class RnRouteController {
     })
     @PutMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.RN_ROUTE, description = OperationRecordLog.OperationDescription.UPDATE_RN_ROUTE)
-    public ServiceResult update(@PathVariable int id, @RequestBody RnRouteRequestDTO rnRouteRequestDTO) {
+    public ServiceResult<?> update(@PathVariable int id, @RequestBody RnRouteRequestDTO rnRouteRequestDTO) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
         //校验版本区间
-        ServiceResult serviceResult = basicService.checkVersion(rnRouteRequestDTO);
+        ServiceResult<?> serviceResult = basicService.checkVersion(rnRouteRequestDTO);
         if (serviceResult.getCode() != 200) {
             return serviceResult;
         }
@@ -126,7 +126,7 @@ public class RnRouteController {
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.RN_ROUTE, description = OperationRecordLog.OperationDescription.DELETE_RN_ROUTE)
-    public ServiceResult delete(@PathVariable int id) {
+    public ServiceResult<?> delete(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -137,7 +137,7 @@ public class RnRouteController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{id}")
-    public ServiceResult find(@PathVariable int id) {
+    public ServiceResult<?> find(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }

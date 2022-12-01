@@ -29,7 +29,7 @@
 //    public void bindUserAndApp() throws Exception {
 //        String userId = "test";
 //        int appId = 31;
-//        ServiceResult result = adminService.bindUserAndApp(userId, appId);
+//        ServiceResult<?> result = adminService.bindUserAndApp(userId, appId);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -45,7 +45,7 @@
 //    public void unbindUserAndApp() throws Exception {
 //        String userId = "test";
 //        int appId = 31;
-//        ServiceResult result = adminService.unbindUserAndApp(userId, appId);
+//        ServiceResult<?> result = adminService.unbindUserAndApp(userId, appId);
 //        if (result.getData() != null) {
 //
 //            logger.info(result.getData().toString());
@@ -59,7 +59,7 @@
 //        App app = new App();
 //        app.setAppName("testAPP");
 //        app.setTenantAppId("testTenantAppId");
-//        ServiceResult result = adminService.createApp(app.getAppName(), app.getTenantAppId());
+//        ServiceResult<?> result = adminService.createApp(app.getAppName(), app.getTenantAppId());
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -70,7 +70,7 @@
 //        App app = new App();
 //        app.setAppName("testEditAPP");
 //        app.setTenantAppId("testEditTenantAppId");
-//        ServiceResult result = adminService.editApp(app.getId(), app.getAppName(), app.getTenantAppId());
+//        ServiceResult<?> result = adminService.editApp(app.getId(), app.getAppName(), app.getTenantAppId());
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        } //todo ?  如果要编辑的APP不存在，调用方法提示 {"code":10002,"message":"数据库插入错误","data":null}
@@ -79,7 +79,7 @@
 //    @Test
 //    public void deleteApp() throws Exception {
 //        Integer appId = 24;
-//        ServiceResult result = adminService.deleteApp(appId);
+//        ServiceResult<?> result = adminService.deleteApp(appId);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -88,7 +88,7 @@
 //    @Test
 //    public void getApp() throws Exception {
 //        Integer id = 24;
-//        ServiceResult result = adminService.getApp(id);
+//        ServiceResult<?> result = adminService.getApp(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -98,7 +98,7 @@
 //    public void deleteAppForever() throws Exception {
 ////        Integer appId = 24;
 //        Integer appId = 20;
-//        ServiceResult result = adminService.deleteAppForever(appId);
+//        ServiceResult<?> result = adminService.deleteAppForever(appId);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -112,7 +112,7 @@
 //        if (StringUtils.hasLength(appName)) {
 //            wrapper.andNew().like("app_name", "%" + appName + "%");
 //        }
-//        ServiceResult result = adminService.listApp(1, 10, wrapper);
+//        ServiceResult<?> result = adminService.listApp(1, 10, wrapper);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -123,7 +123,7 @@
 //        EntityWrapper<App> wrapper = new EntityWrapper<>();
 //        String userId = "b9e980c1495e4d0582c257901d86b4ff";
 //        wrapper.and().eq("del_flag", 0);
-//        ServiceResult result = adminService.listAppWithBindInfo(1, 10, wrapper, userId);
+//        ServiceResult<?> result = adminService.listAppWithBindInfo(1, 10, wrapper, userId);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -132,7 +132,7 @@
 //    @Test
 //    public void listBindApp() throws Exception {
 //        String userId = "b9e980c1495e4d0582c257901d86b4ff";
-//        ServiceResult result = adminService.listBindApp(userId);
+//        ServiceResult<?> result = adminService.listBindApp(userId);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -149,7 +149,7 @@
 //        if (StringUtils.hasLength(phone)) {
 //            wrapper.and().like("phone", "%" + phone + "%");
 //        }
-//        ServiceResult result = adminService.listUser(1, 10, wrapper);
+//        ServiceResult<?> result = adminService.listUser(1, 10, wrapper);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -158,7 +158,7 @@
 //    @Test
 //    public void isAdmin() throws Exception {
 //        LoginInfo loginInfo = ThreadLocalUtils.USER_THREAD_LOCAL.get();
-//        ServiceResult result = adminService.isAdmin(loginInfo.getUserId());
+//        ServiceResult<?> result = adminService.isAdmin(loginInfo.getUserId());
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

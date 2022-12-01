@@ -14,7 +14,7 @@ public interface RnService {
      * @param routeStatus   路由状态 0:关闭 1:线上开启 2:测试需要
      * @return              路由列表
      */
-    ServiceResult route(String version,String appId,String platform, int routeStatus);
+    ServiceResult<?> route(String version,String appId,String platform, int routeStatus);
 
     /**
      * 获取Rn包信息
@@ -24,5 +24,5 @@ public interface RnService {
      * @param rnStatus  路由状态 0:关闭 1:线上开启 2:测试需要
      * @return          包列表
      */
-    ServiceResult bundles(String version,String appId,String platform, int rnStatus);
+    ServiceResult<?> bundles(String version,String appId,String platform, int rnStatus);
 }

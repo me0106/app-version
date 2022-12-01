@@ -24,7 +24,7 @@
 //        channel.setChannelName("name");
 //        channel.setChannelCode("code");
 //        channel.setChannelType(1);
-//        ServiceResult result = channelService.createChannel(channel.getChannelName(), channel.getChannelCode(), channel.getChannelType());
+//        ServiceResult<?> result = channelService.createChannel(channel.getChannelName(), channel.getChannelCode(), channel.getChannelType());
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -39,7 +39,7 @@
 //    @Test
 //    public void deleteChannel() throws Exception {
 //        Integer id = 24;
-//        ServiceResult result = channelService.deleteChannel(id);
+//        ServiceResult<?> result = channelService.deleteChannel(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -48,7 +48,7 @@
 //    @Test
 //    public void deleteChannelForever() throws Exception {
 //        Integer id = 24;
-//        ServiceResult result = channelService.deleteChannelForever(id);
+//        ServiceResult<?> result = channelService.deleteChannelForever(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -57,7 +57,7 @@
 //    @Test
 //    public void scrapChannel() throws Exception {
 //        Integer id = 22;
-//        ServiceResult result = channelService.scrapChannel(id);
+//        ServiceResult<?> result = channelService.scrapChannel(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -78,7 +78,7 @@
 //    @Test
 //    public void openChannel() throws Exception {
 //        Integer id = 31;
-//        ServiceResult result = channelService.openChannel(id);
+//        ServiceResult<?> result = channelService.openChannel(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -117,7 +117,7 @@
 //
 //
 //
-//        ServiceResult result = channelService.list(1, 10, wrapper);
+//        ServiceResult<?> result = channelService.list(1, 10, wrapper);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -126,7 +126,7 @@
 //    @Test
 //    public void findChannel() throws Exception {
 //        Integer id = 24;
-//        ServiceResult result = channelService.findChannel(id);
+//        ServiceResult<?> result = channelService.findChannel(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -141,7 +141,7 @@
 //    @Test
 //    public void findByChannelCode() throws Exception {
 //        String channelCode = "tttt";
-//        ServiceResult result = channelService.findByChannelCode(channelCode);
+//        ServiceResult<?> result = channelService.findByChannelCode(channelCode);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

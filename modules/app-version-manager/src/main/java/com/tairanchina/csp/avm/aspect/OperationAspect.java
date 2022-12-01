@@ -27,7 +27,7 @@ public class OperationAspect {
     private OperationRecordLogMapper operationRecordLogMapper;
 
     @AfterReturning(value = "@annotation(operationRecord)", returning = "serviceResult")
-    public void recordOperationLog(JoinPoint joinPoint, OperationRecord operationRecord, ServiceResult serviceResult) {
+    public void recordOperationLog(JoinPoint joinPoint, OperationRecord operationRecord, ServiceResult<?> serviceResult) {
         logger.info("开始记录[{}]操作日志...", operationRecord.resource());
         OperationRecordLog log = new OperationRecordLog();
         if (200 == serviceResult.getCode()) {

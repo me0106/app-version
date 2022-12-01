@@ -31,7 +31,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     private ChatBotService chatBotService;
 
     @Override
-    public ServiceResult createCustomApi(CustomApi customApi) {
+    public ServiceResult<?> createCustomApi(CustomApi customApi) {
         customApi.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         customApi.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         int result = customApiMapper.insert(customApi);
@@ -44,7 +44,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     }
 
     @Override
-    public ServiceResult updateCustomApi(CustomApi customApi) {
+    public ServiceResult<?> updateCustomApi(CustomApi customApi) {
         CustomApi checkExisit = customApiMapper.selectById(customApi.getId());
         if (null == checkExisit) {
             return ServiceResultConstants.CUSTOM_API_NOT_EXISTS;
@@ -63,7 +63,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     }
 
     @Override
-    public ServiceResult deleteCustomApi(int id) {
+    public ServiceResult<?> deleteCustomApi(int id) {
         CustomApi customApi = customApiMapper.selectById(id);
         if (null == customApi) {
             return ServiceResultConstants.CUSTOM_API_NOT_EXISTS;
@@ -83,7 +83,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     }
 
     @Override
-    public ServiceResult deleteCustomApiForver(int id) {
+    public ServiceResult<?> deleteCustomApiForver(int id) {
         CustomApi customApi = customApiMapper.selectById(id);
         if (null == customApi) {
             return ServiceResultConstants.CUSTOM_API_NOT_EXISTS;
@@ -100,7 +100,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     }
 
     @Override
-    public ServiceResult getCustomApiByOne(CustomApi customApi) {
+    public ServiceResult<?> getCustomApiByOne(CustomApi customApi) {
         CustomApi result = customApiMapper.selectOne(customApi).orElse(null);
         if (result == null) {
             return ServiceResultConstants.CUSTOM_API_NOT_EXISTS;
@@ -112,7 +112,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     }
 
     @Override
-    public ServiceResult getCustomApiByKeyAndAppId(String customKey) {
+    public ServiceResult<?> getCustomApiByKeyAndAppId(String customKey) {
         CustomApi customApi = new CustomApi();
         customApi.setCustomKey(customKey);
         customApi.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
@@ -128,7 +128,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, Example<CustomApi> wrapper) {
+    public ServiceResult<?> list(int page, int pageSize, Example<CustomApi> wrapper) {
         final Page<CustomApi> customApis = customApiMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
         basicService.formatCreatedBy(customApis);
         return ServiceResult.ok(customApis);

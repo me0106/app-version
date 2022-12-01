@@ -46,7 +46,7 @@ public class AdminController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/isAdmin")
-    public ServiceResult isAdmin() {
+    public ServiceResult<?> isAdmin() {
         LoginInfo loginInfo = ThreadLocalUtils.USER_THREAD_LOCAL.get();
         return adminService.isAdmin(loginInfo.getUserId());
     }
@@ -68,7 +68,7 @@ public class AdminController {
         @Parameter(name = "phone", description = "手机号"),
     })
     @GetMapping("/user/list")
-    public ServiceResult listUser(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> listUser(@RequestParam(required = false, defaultValue = "1") int page,
                                   @RequestParam(required = false, defaultValue = "10") int pageSize,
                                   @RequestParam(required = false, defaultValue = "0") int admin,
                                   @RequestParam(required = false, defaultValue = "") String phone) {
@@ -102,7 +102,7 @@ public class AdminController {
         @Parameter(name = "isAll", description = "是否查询全部应用(包括已软删的)，1是0否"),
     })
     @GetMapping("/app/list")
-    public ServiceResult listApp(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> listApp(@RequestParam(required = false, defaultValue = "1") int page,
                                  @RequestParam(required = false, defaultValue = "10") int pageSize,
                                  @RequestParam(required = false, defaultValue = "") String appName,
                                  @RequestParam(required = false, defaultValue = "false") Boolean isAll) {
@@ -132,7 +132,7 @@ public class AdminController {
         @Parameter(name = "id", description = "应用ID", required = true),
     })
     @GetMapping("/app/{id}")
-    public ServiceResult app(@PathVariable int id) {
+    public ServiceResult<?> app(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -155,7 +155,7 @@ public class AdminController {
         @Parameter(name = "userId", description = "用户ID", required = true),
     })
     @GetMapping("/app/list/bind")
-    public ServiceResult listAppWithBindInfo(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> listAppWithBindInfo(@RequestParam(required = false, defaultValue = "1") int page,
                                              @RequestParam(required = false, defaultValue = "10") int pageSize,
                                              @RequestParam String userId) {
         Example<App> wrapper = new Example<>();
@@ -181,7 +181,7 @@ public class AdminController {
     })
     @PostMapping("/app")
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.APP, description = OperationRecordLog.OperationDescription.CREATE_APP)
-    public ServiceResult createApp(@RequestBody AppRequestDTO appRequestDTO) {
+    public ServiceResult<?> createApp(@RequestBody AppRequestDTO appRequestDTO) {
         if (appRequestDTO == null || StringUtils.isBlank(appRequestDTO.getAppName()) || StringUtils.isBlank(appRequestDTO.getTenantAppId())) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -214,7 +214,7 @@ public class AdminController {
     })
     @PutMapping("/app/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.APP, description = OperationRecordLog.OperationDescription.UPDATE_APP)
-    public ServiceResult editApp(@PathVariable int id, @RequestBody AppRequestDTO appRequestDTO) {
+    public ServiceResult<?> editApp(@PathVariable int id, @RequestBody AppRequestDTO appRequestDTO) {
         if (appRequestDTO == null || StringUtils.isBlank(appRequestDTO.getAppName()) || StringUtils.isBlank(appRequestDTO.getTenantAppId())) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -250,7 +250,7 @@ public class AdminController {
     })
     @DeleteMapping("/app/{appId}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.APP, description = OperationRecordLog.OperationDescription.DELETE_APP)
-    public ServiceResult deleteApp(@PathVariable int appId) {
+    public ServiceResult<?> deleteApp(@PathVariable int appId) {
         if (appId < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -275,7 +275,7 @@ public class AdminController {
     })
     @PutMapping("/{userId}/{appId}/bind")
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.USER_APP_REL, description = OperationRecordLog.OperationDescription.CREATE_USER_APP_REL)
-    public ServiceResult bind(@PathVariable String userId, @PathVariable int appId) {
+    public ServiceResult<?> bind(@PathVariable String userId, @PathVariable int appId) {
         if (StringUtils.isEmpty(userId) || appId < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -297,7 +297,7 @@ public class AdminController {
         @Parameter(name = "userId", description = "用户ID", required = true),
     })
     @GetMapping("/app/list/only/bind")
-    public ServiceResult listBindApp(@RequestParam String userId) {
+    public ServiceResult<?> listBindApp(@RequestParam String userId) {
         if (StringUtils.isBlank(userId)) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -323,7 +323,7 @@ public class AdminController {
     })
     @PutMapping("/{userId}/{appId}/unBind")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE_FOREVER, resource = OperationRecordLog.OperationResource.USER_APP_REL, description = OperationRecordLog.OperationDescription.DELETE_FOREVER_USER_APP_REL)
-    public ServiceResult unBind(@PathVariable String userId, @PathVariable int appId) {
+    public ServiceResult<?> unBind(@PathVariable String userId, @PathVariable int appId) {
         if (StringUtils.isEmpty(userId) || appId < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -345,7 +345,7 @@ public class AdminController {
     })
     @PutMapping("/user")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.USER, description = OperationRecordLog.OperationDescription.UPDATE_USER)
-    public ServiceResult changeNickName(@RequestBody AdminUpdateNickNameRequestDTO user) {
+    public ServiceResult<?> changeNickName(@RequestBody AdminUpdateNickNameRequestDTO user) {
         String userId = user.getUserId();
         String nickName = user.getNickName();
         if (StringUtilsExt.hasBlank(userId, nickName)) {

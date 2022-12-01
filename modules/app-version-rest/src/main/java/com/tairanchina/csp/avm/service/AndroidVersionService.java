@@ -15,7 +15,7 @@ public interface AndroidVersionService {
      * @param channelCode 渠道码
      * @return 版本信息
      */
-    ServiceResult findNewestVersion(String tenantAppId, String version, String channelCode);
+    ServiceResult<?> findNewestVersion(String tenantAppId, String version, String channelCode);
 
     /**
      * 获取下载地址
@@ -23,7 +23,7 @@ public interface AndroidVersionService {
      * @param apkId apk的ID
      * @return Apk实体
      */
-    ServiceResult getDownloadUrl(int apkId);
+    ServiceResult<?> getDownloadUrl(int apkId);
 
     /**
      * 获取最新APK包
@@ -32,5 +32,5 @@ public interface AndroidVersionService {
      * @param channelCode
      * @return
      */
-    ServiceResult findNewestApk(String tenantAppId, String channelCode);
+    ServiceResult<?> findNewestApk(String tenantAppId, String channelCode);
 }

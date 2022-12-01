@@ -32,7 +32,7 @@ public interface BasicService {
     /**
      * 检查版本号大小
      */
-    ServiceResult checkVersion(Object o);
+    ServiceResult<?> checkVersion(Object o);
 
     /**
      *比较版本大小

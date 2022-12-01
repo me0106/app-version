@@ -7,64 +7,51 @@ import com.tairanchina.csp.avm.common.Json;
  * Service返回
  * Created by hzlizx on 2018/4/11 0011
  */
-public class ServiceResult {
+public class ServiceResult<T> {
 
     /**
      * Code     错误码，200为正常
      * message  文字消息
      * data     需要封装往前台传的对象
      */
-    private int code;
-    private String message;
-    private Object data;
+    private final int code;
+    private final String message;
+    private final T data;
 
-    public ServiceResult(int code, String message, Object data) {
+    public ServiceResult(int code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
     }
 
-    public ServiceResult(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
 
     public int getCode() {
         return code;
-    }
-
-    public ServiceResult setCode(int code) {
-        this.code = code;
-        return this;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public ServiceResult setMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public ServiceResult setData(Object data) {
-        this.data = data;
-        return this;
+
+    public static <T> ServiceResult<T> ok(T data) {
+        return new ServiceResult<>(200, "请求成功", data);
     }
 
-    public static ServiceResult ok(Object data) {
-        ServiceResult serviceResult = new ServiceResult(200, "请求成功");
-        serviceResult.setData(data);
-        return serviceResult;
+    public static <T> ServiceResult<T> ok(String message, T data) {
+        return new ServiceResult<>(200, message, data);
     }
 
-    public static ServiceResult failed(int code, String message) {
-        ServiceResult serviceResult = new ServiceResult(code, message);
-        return serviceResult;
+    public static <T> ServiceResult<T> failed(int code, String message) {
+        return new ServiceResult<>(code, message, null);
+    }
+
+    public static <T> ServiceResult<T> of(int code, String message, T data) {
+        return new ServiceResult<>(code, message, data);
     }
 
 

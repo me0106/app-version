@@ -65,7 +65,7 @@
 //        customApi.setAndroidMax("2.0.0");
 //        customApi.setCustomContent("content");
 //        customApi.setCustomKey("key");
-//        ServiceResult result = basicService.checkVersion(customApi);
+//        ServiceResult<?> result = basicService.checkVersion(customApi);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

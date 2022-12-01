@@ -38,7 +38,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     private ChatBotService chatBotService;
 
     @Override
-    public ServiceResult create(IosVersion iosVersion) {
+    public ServiceResult<?> create(IosVersion iosVersion) {
         iosVersion.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         iosVersion.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         if (checkVersionExist(iosVersion)) {
@@ -54,7 +54,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult update(IosVersion iosVersion) {
+    public ServiceResult<?> update(IosVersion iosVersion) {
         Integer id = iosVersion.getId();
         IosVersion iosVersionSelected = iosVersionMapper.selectById(id);
         if (iosVersionSelected == null) {
@@ -82,7 +82,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult delete(int id) {
+    public ServiceResult<?> delete(int id) {
         IosVersion iosVersion = iosVersionMapper.selectById(id);
         if (iosVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
@@ -100,14 +100,14 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, Example<IosVersion> wrapper) {
+    public ServiceResult<?> list(int page, int pageSize, Example<IosVersion> wrapper) {
         final Page<IosVersion> versions = iosVersionMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
         basicService.formatCreatedBy(versions);
         return ServiceResult.ok(versions);
     }
 
     @Override
-    public ServiceResult listSort(int page, int pageSize, Example<IosVersion> wrapper) {
+    public ServiceResult<?> listSort(int page, int pageSize, Example<IosVersion> wrapper) {
         List<IosVersion> iosVersions = iosVersionMapper.selectByExample(wrapper);
         iosVersions.sort((o1, o2) -> VersionCompareUtils.compareVersion(o2.getAppVersion(), o1.getAppVersion()));
         List<IosVersion> pageList = iosVersions.subList((page - 1) * pageSize, Math.min(pageSize * page, iosVersions.size()));
@@ -117,7 +117,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult findBetweenVersionList(String version1, String version2, Example<IosVersion> wrapper) {
+    public ServiceResult<?> findBetweenVersionList(String version1, String version2, Example<IosVersion> wrapper) {
         List<IosVersion> iosVersions = iosVersionMapper.selectByExample(wrapper);
         String max = VersionCompareUtils.compareVersion(version1, version2) >= 0 ? version1 : version2;
         String min = VersionCompareUtils.compareVersion(version1, version2) <= 0 ? version1 : version2;
@@ -128,7 +128,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult listAllVersion() {
+    public ServiceResult<?> listAllVersion() {
         final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         final ExampleWrapper<IosVersion, Integer> exampleWrapper = iosVersionMapper.wrapper().eq(IosVersion::getAppId, appId)
             .eq(IosVersion::getDelFlag, 0);
@@ -138,7 +138,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult delivery(int id) {
+    public ServiceResult<?> delivery(int id) {
         IosVersion iosVersion = iosVersionMapper.selectById(id);
         if (iosVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
@@ -156,7 +156,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult undelivery(int id) {
+    public ServiceResult<?> undelivery(int id) {
         IosVersion iosVersion = iosVersionMapper.selectById(id);
         if (iosVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
@@ -174,7 +174,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     }
 
     @Override
-    public ServiceResult get(int id) {
+    public ServiceResult<?> get(int id) {
         IosVersion iosVersion = iosVersionMapper.selectById(id);
         if (iosVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;

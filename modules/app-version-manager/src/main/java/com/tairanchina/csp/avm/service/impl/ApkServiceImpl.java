@@ -16,8 +16,6 @@ import com.tairanchina.csp.avm.service.ApkService;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
 import io.mybatis.mapper.example.Example;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +26,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ApkServiceImpl implements ApkService {
-    private static final Logger logger = LoggerFactory.getLogger(ApkServiceImpl.class);
 
     @Autowired
     private ApkMapper apkMapper;
@@ -43,7 +40,7 @@ public class ApkServiceImpl implements ApkService {
     AndroidVersionMapper androidVersionMapper;
 
     @Override
-    public ServiceResult create(Apk apk) {
+    public ServiceResult<?> create(Apk apk) {
         apk.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         apk.setId(null);
         apk.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
@@ -64,7 +61,7 @@ public class ApkServiceImpl implements ApkService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, Example<Apk> wrapper, int versionId) {
+    public ServiceResult<?> list(int page, int pageSize, Example<Apk> wrapper, int versionId) {
         AndroidVersion androidVersion = androidVersionMapper.selectById(versionId);
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
@@ -85,7 +82,7 @@ public class ApkServiceImpl implements ApkService {
     }
 
     @Override
-    public ServiceResult delivery(int apkId) {
+    public ServiceResult<?> delivery(int apkId) {
         Apk apk = apkMapper.selectById(apkId);
         if (apk == null) {
             return ServiceResultConstants.APK_NOT_EXISTS;
@@ -104,7 +101,7 @@ public class ApkServiceImpl implements ApkService {
     }
 
     @Override
-    public ServiceResult undelivery(int apkId) {
+    public ServiceResult<?> undelivery(int apkId) {
         Apk apk = apkMapper.selectById(apkId);
         if (apk == null) {
             return ServiceResultConstants.APK_NOT_EXISTS;
@@ -123,7 +120,7 @@ public class ApkServiceImpl implements ApkService {
     }
 
     @Override
-    public ServiceResult delete(int apkId) {
+    public ServiceResult<?> delete(int apkId) {
         Apk apk = apkMapper.selectById(apkId);
         if (apk == null) {
             return ServiceResultConstants.APK_NOT_EXISTS;
@@ -141,7 +138,7 @@ public class ApkServiceImpl implements ApkService {
     }
 
     @Override
-    public ServiceResult exists(String channelCode, int versionId) {
+    public ServiceResult<?> exists(String channelCode, int versionId) {
         List<Channel> channels = channelMapper.wrapper().eq(Channel::getChannelCode, channelCode)
             .eq(Channel::getAppId, ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId())
             .eq(Channel::getDelFlag, 0)
@@ -166,13 +163,12 @@ public class ApkServiceImpl implements ApkService {
             message = "该渠道下APK已经上传包，请勿重复上传";
             map.put("exists", true);
         }
-        ServiceResult ok = ServiceResult.ok(map);
-        ok.setMessage(message);
-        return ok;
+
+        return ServiceResult.ok(message, map);
     }
 
     @Override
-    public ServiceResult getApkPageWithChannelCode(int page, int pageSize, Integer versionId, String channelCode, String md5, Integer deliveryStatus) {
+    public ServiceResult<?> getApkPageWithChannelCode(int page, int pageSize, Integer versionId, String channelCode, String md5, Integer deliveryStatus) {
         AndroidVersion androidVersion = androidVersionMapper.selectById(versionId);
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;

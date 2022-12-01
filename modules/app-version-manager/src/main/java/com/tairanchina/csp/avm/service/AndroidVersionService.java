@@ -16,7 +16,7 @@ public interface AndroidVersionService {
      * @param androidVersion 安卓版本信息
      * @return 是否成功
      */
-    ServiceResult createAndroidVersion(AndroidVersion androidVersion);
+    ServiceResult<?> createAndroidVersion(AndroidVersion androidVersion);
 
     /**
      * 删除一个安卓版本（软删除）
@@ -24,7 +24,7 @@ public interface AndroidVersionService {
      * @param versionId 安卓版本ID
      * @return 是否成功
      */
-    ServiceResult deleteAndroidVersion(int versionId);
+    ServiceResult<?> deleteAndroidVersion(int versionId);
 
     /**
      * 删除一个安卓版本（硬删除）
@@ -32,7 +32,7 @@ public interface AndroidVersionService {
      * @param versionId 安卓版本ID（该版本应该已经被软删除了）
      * @return 是否成功
      */
-    ServiceResult deleteAndroidVersionForever(int versionId);
+    ServiceResult<?> deleteAndroidVersionForever(int versionId);
 
     /**
      * 更新一个安卓版本
@@ -40,7 +40,7 @@ public interface AndroidVersionService {
      * @param androidVersion 带ID的android版本
      * @return 是否成功
      */
-    ServiceResult updateAndroidVersion(AndroidVersion androidVersion);
+    ServiceResult<?> updateAndroidVersion(AndroidVersion androidVersion);
 
     /**
      * 列出所有的安卓版本
@@ -50,7 +50,7 @@ public interface AndroidVersionService {
      * @param wrapper  查询条件
      * @return 列表
      */
-    ServiceResult list(int page, int pageSize, Example<AndroidVersion> wrapper);
+    ServiceResult<?> list(int page, int pageSize, Example<AndroidVersion> wrapper);
 
     /**
      * 分页排序
@@ -60,7 +60,7 @@ public interface AndroidVersionService {
      * @param wrapper  查询条件
      * @return 列表
      */
-    ServiceResult listSort(int page, int pageSize, Example<AndroidVersion> wrapper);
+    ServiceResult<?> listSort(int page, int pageSize, Example<AndroidVersion> wrapper);
 
     /**
      * 根据条件获取两版本之间的所有版本
@@ -70,7 +70,7 @@ public interface AndroidVersionService {
      * @param wrapper  查询条件
      * @return
      */
-    ServiceResult findBetweenVersionList(String version1, String version2, Example<AndroidVersion> wrapper);
+    ServiceResult<?> findBetweenVersionList(String version1, String version2, Example<AndroidVersion> wrapper);
 
     /**
      * 根据ID找到版本
@@ -78,7 +78,7 @@ public interface AndroidVersionService {
      * @param id
      * @return
      */
-    ServiceResult findById(int id);
+    ServiceResult<?> findById(int id);
 
 
     /**
@@ -86,7 +86,7 @@ public interface AndroidVersionService {
      *
      * @return
      */
-    ServiceResult listAllVersion();
+    ServiceResult<?> listAllVersion();
 
 
     /**
@@ -95,7 +95,7 @@ public interface AndroidVersionService {
      * @param id
      * @return
      */
-    ServiceResult delivery(int id);
+    ServiceResult<?> delivery(int id);
 
     /**
      * 下架
@@ -103,6 +103,6 @@ public interface AndroidVersionService {
      * @param id
      * @return
      */
-    ServiceResult undelivery(int id);
+    ServiceResult<?> undelivery(int id);
 
 }

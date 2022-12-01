@@ -47,7 +47,7 @@
 //        if (versionDescription.length() > 32) {
 //            logger.info("VERSION_TOO_LONG");
 //        }
-//        ServiceResult result = androidVersionService.createAndroidVersion(androidVersion);
+//        ServiceResult<?> result = androidVersionService.createAndroidVersion(androidVersion);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -57,7 +57,7 @@
 //    @Test
 //    public void deleteAndroidVersion() throws Exception {
 //        Integer id = 14;
-//        ServiceResult result = androidVersionService.deleteAndroidVersion(id);
+//        ServiceResult<?> result = androidVersionService.deleteAndroidVersion(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -66,7 +66,7 @@
 //    @Test
 //    public void deleteAndroidVersionForever() throws Exception {
 //        Integer id = 14;
-//        ServiceResult result = androidVersionService.deleteAndroidVersionForever(id);
+//        ServiceResult<?> result = androidVersionService.deleteAndroidVersionForever(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -85,7 +85,7 @@
 //        if (!StringUtilsExt.hasEmpty(appVersion, allowLowestVersion) && allowLowestVersion.compareTo(appVersion) > 0) {
 //            logger.info("ALLOWLOWESTVERSION_BIG_THAN_APPVERSION");
 //        }
-//        ServiceResult result = androidVersionService.updateAndroidVersion(androidVersion);
+//        ServiceResult<?> result = androidVersionService.updateAndroidVersion(androidVersion);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -109,7 +109,7 @@
 //        if (versionStatus != null) {
 //            wrapper.and().eq("version_status", versionStatus);
 //        }
-//        ServiceResult result = androidVersionService.list(1, 1, wrapper);
+//        ServiceResult<?> result = androidVersionService.list(1, 1, wrapper);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -118,7 +118,7 @@
 //    @Test
 //    public void findById() throws Exception {
 //        Integer id = 14;
-//        ServiceResult result = androidVersionService.findById(id);
+//        ServiceResult<?> result = androidVersionService.findById(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -126,7 +126,7 @@
 //
 //    @Test
 //    public void listAllVersion() throws Exception {
-//        ServiceResult result = androidVersionService.listAllVersion();
+//        ServiceResult<?> result = androidVersionService.listAllVersion();
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -135,7 +135,7 @@
 //    @Test
 //    public void delivery() throws Exception {
 //        Integer id = 14;
-//        ServiceResult result = androidVersionService.delivery(id);
+//        ServiceResult<?> result = androidVersionService.delivery(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -144,7 +144,7 @@
 //    @Test
 //    public void undelivery() throws Exception {
 //        Integer id = 14;
-//        ServiceResult result = androidVersionService.undelivery(id);
+//        ServiceResult<?> result = androidVersionService.undelivery(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

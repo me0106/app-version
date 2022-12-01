@@ -39,7 +39,7 @@ public class RnServiceImpl implements RnService {
     private AppService appService;
 
     @Override
-    public ServiceResult route(String version, String appId, String platform, int routeStatus) {
+    public ServiceResult<?> route(String version, String appId, String platform, int routeStatus) {
         App appSelected = appService.findAppByTenantAppId(appId);
         if (appSelected == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;
@@ -80,7 +80,7 @@ public class RnServiceImpl implements RnService {
     }
 
     @Override
-    public ServiceResult bundles(String version, String appId, String platform, int rnStatus) {
+    public ServiceResult<?> bundles(String version, String appId, String platform, int rnStatus) {
         App appSelected = appService.findAppByTenantAppId(appId);
         if (appSelected == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;

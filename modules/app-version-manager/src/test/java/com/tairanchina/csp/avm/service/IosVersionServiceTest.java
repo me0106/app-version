@@ -34,7 +34,7 @@
 //        if (allowLowestVersion.compareTo(appVersion) > 0) {
 //            logger.info("ALLOWLOWESTVERSION_BIG_THAN_APPVERSION");
 //        } else {
-//            ServiceResult result = iosVersionService.create(iosVersion);
+//            ServiceResult<?> result = iosVersionService.create(iosVersion);
 //            if (result.getData() != null) {
 //                logger.info(result.getData().toString());
 //            }
@@ -57,7 +57,7 @@
 //        if (allowLowestVersion.compareTo(appVersion) > 0) {
 //            logger.info("ALLOWLOWESTVERSION_BIG_THAN_APPVERSION");
 //        } else {
-//            ServiceResult result = iosVersionService.update(iosVersion);
+//            ServiceResult<?> result = iosVersionService.update(iosVersion);
 //            if (result.getData() != null) {
 //                logger.info(result.getData().toString());
 //            }
@@ -67,7 +67,7 @@
 //    @Test
 //    public void delete() throws Exception {
 //        Integer id = 20;
-//        ServiceResult result = iosVersionService.delete(id);
+//        ServiceResult<?> result = iosVersionService.delete(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -91,7 +91,7 @@
 //        if (versionStatus != null) {
 //            wrapper.and().eq("version_status", versionStatus);
 //        }
-//        ServiceResult result = iosVersionService.list(1, 10, wrapper);
+//        ServiceResult<?> result = iosVersionService.list(1, 10, wrapper);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -99,7 +99,7 @@
 //
 //    @Test
 //    public void listAllVersion() throws Exception {
-//        ServiceResult result = iosVersionService.listAllVersion();
+//        ServiceResult<?> result = iosVersionService.listAllVersion();
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -108,7 +108,7 @@
 //    @Test
 //    public void delivery() throws Exception {
 //        Integer id = 20;
-//        ServiceResult result = iosVersionService.delivery(id);
+//        ServiceResult<?> result = iosVersionService.delivery(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -117,7 +117,7 @@
 //    @Test
 //    public void undelivery() throws Exception {
 //        Integer id = 20;
-//        ServiceResult result = iosVersionService.undelivery(id);
+//        ServiceResult<?> result = iosVersionService.undelivery(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -126,7 +126,7 @@
 //    @Test
 //    public void get() throws Exception {
 //        Integer id = 20;
-//        ServiceResult result = iosVersionService.get(id);
+//        ServiceResult<?> result = iosVersionService.get(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

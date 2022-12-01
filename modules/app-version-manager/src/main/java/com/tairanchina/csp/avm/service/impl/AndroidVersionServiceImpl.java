@@ -44,7 +44,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     private ChatBotService chatBotService;
 
     @Override
-    public ServiceResult createAndroidVersion(AndroidVersion androidVersion) {
+    public ServiceResult<?> createAndroidVersion(AndroidVersion androidVersion) {
         //校验安卓版本是否已存在
         if (checkVersionExist(androidVersion)) {
             return ServiceResultConstants.VERSION_EXISTS;
@@ -61,7 +61,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult deleteAndroidVersion(int versionId) {
+    public ServiceResult<?> deleteAndroidVersion(int versionId) {
         AndroidVersion androidVersion = androidVersionMapper.selectById(versionId);
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
@@ -84,7 +84,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult deleteAndroidVersionForever(int versionId) {
+    public ServiceResult<?> deleteAndroidVersionForever(int versionId) {
         AndroidVersion androidVersion = androidVersionMapper.selectById(versionId);
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
@@ -104,7 +104,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult updateAndroidVersion(AndroidVersion androidVersion) {
+    public ServiceResult<?> updateAndroidVersion(AndroidVersion androidVersion) {
 
         AndroidVersion androidVersionSelected = androidVersionMapper.selectById(androidVersion.getId());
         if (androidVersionSelected == null) {
@@ -131,14 +131,14 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, Example<AndroidVersion> wrapper) {
+    public ServiceResult<?> list(int page, int pageSize, Example<AndroidVersion> wrapper) {
         final Page<AndroidVersion> versions = androidVersionMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
         basicService.formatCreatedBy(versions);
         return ServiceResult.ok(versions);
     }
 
     @Override
-    public ServiceResult listSort(int page, int pageSize, Example<AndroidVersion> wrapper) {
+    public ServiceResult<?> listSort(int page, int pageSize, Example<AndroidVersion> wrapper) {
         List<AndroidVersion> androidVersions = androidVersionMapper.selectByExample(wrapper);
         androidVersions.sort((o1, o2) -> VersionCompareUtils.compareVersion(o2.getAppVersion(), o1.getAppVersion()));
         List<AndroidVersion> pageList = androidVersions.subList((page - 1) * pageSize, Math.min(pageSize * page, androidVersions.size()));
@@ -148,7 +148,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult findBetweenVersionList(String version1, String version2, Example<AndroidVersion> wrapper) {
+    public ServiceResult<?> findBetweenVersionList(String version1, String version2, Example<AndroidVersion> wrapper) {
         List<AndroidVersion> androidVersions = androidVersionMapper.selectByExample(wrapper);
         String max = VersionCompareUtils.compareVersion(version1, version2) >= 0 ? version1 : version2;
         String min = VersionCompareUtils.compareVersion(version1, version2) <= 0 ? version1 : version2;
@@ -159,7 +159,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult findById(int id) {
+    public ServiceResult<?> findById(int id) {
         AndroidVersion androidVersion = androidVersionMapper.selectById(id);
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
@@ -172,7 +172,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult listAllVersion() {
+    public ServiceResult<?> listAllVersion() {
         final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         final ExampleWrapper<AndroidVersion, Integer> wrapper = androidVersionMapper.wrapper().eq(AndroidVersion::getAppId, appId).eq(AndroidVersion::getDelFlag, 0);
         ExtWrapper.orderByVersion(wrapper, "app_version");
@@ -181,7 +181,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult delivery(int id) {
+    public ServiceResult<?> delivery(int id) {
         AndroidVersion androidVersion = androidVersionMapper.selectById(id);
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;
@@ -223,7 +223,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult undelivery(int id) {
+    public ServiceResult<?> undelivery(int id) {
         AndroidVersion androidVersion = androidVersionMapper.selectById(id);
         if (androidVersion == null) {
             return ServiceResultConstants.VERSION_NOT_EXISTS;

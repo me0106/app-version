@@ -7,9 +7,9 @@ import io.mybatis.mapper.example.Example;
 public interface CustomApiService {
 
 
-    ServiceResult createCustomApi(CustomApi customApi);
+    ServiceResult<?> createCustomApi(CustomApi customApi);
 
-    ServiceResult updateCustomApi(CustomApi customApi);
+    ServiceResult<?> updateCustomApi(CustomApi customApi);
 
     /**
      * 软删
@@ -17,7 +17,7 @@ public interface CustomApiService {
      * @param id
      * @return
      */
-    ServiceResult deleteCustomApi(int id);
+    ServiceResult<?> deleteCustomApi(int id);
 
     /**
      * 硬删
@@ -25,12 +25,12 @@ public interface CustomApiService {
      * @param id
      * @return
      */
-    ServiceResult deleteCustomApiForver(int id);
+    ServiceResult<?> deleteCustomApiForver(int id);
 
-    ServiceResult getCustomApiByOne(CustomApi customApi);
+    ServiceResult<?> getCustomApiByOne(CustomApi customApi);
 
-    ServiceResult getCustomApiByKeyAndAppId(String customKey);
+    ServiceResult<?> getCustomApiByKeyAndAppId(String customKey);
 
-    ServiceResult list(int page, int pageSize, Example<CustomApi> wrapper);
+    ServiceResult<?> list(int page, int pageSize, Example<CustomApi> wrapper);
 
 }

@@ -20,7 +20,7 @@ public class RnServiceTest extends BaseTest {
         String tenantAppId = "app";
         String platform = "ios";
         Integer status = 1;
-        ServiceResult result = rnService.route(version, tenantAppId, platform, status);
+        ServiceResult<?> result = rnService.route(version, tenantAppId, platform, status);
         if (result.getData() != null) {
             logger.info(result.getData().toString());
         }
@@ -43,7 +43,7 @@ public class RnServiceTest extends BaseTest {
         String tenantAppId = "app";
         String platform = "ios";
         Integer status = 1;
-        ServiceResult result = rnService.bundles(version, tenantAppId, platform, status);
+        ServiceResult<?> result = rnService.bundles(version, tenantAppId, platform, status);
         if (result.getData() != null) {
             logger.info(result.getData().toString());
         }

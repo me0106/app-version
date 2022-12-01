@@ -42,7 +42,7 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     @Transactional
-    public ServiceResult createChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events) {
+    public ServiceResult<?> createChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events) {
         if (StringUtilsExt.hasEmpty(webhook)) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -75,7 +75,7 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     @Transactional
-    public ServiceResult editChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events) {
+    public ServiceResult<?> editChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events) {
         ChatBot chatBot = new ChatBot();
         chatBot.setAppId(appId);
         ChatBot chatBotSelected = chatBotMapper.selectOne(chatBot).orElse(null);
@@ -101,7 +101,7 @@ public class ChatBotServiceImpl implements ChatBotService {
     }
 
     @Override
-    public ServiceResult deleteChatBot(Integer appId) {
+    public ServiceResult<?> deleteChatBot(Integer appId) {
         final Example<ChatBot> example = chatBotMapper.example();
         example.createCriteria().andEqualTo(ChatBot::getAppId, appId);
         chatBotMapper.deleteByExample(example);
@@ -109,7 +109,7 @@ public class ChatBotServiceImpl implements ChatBotService {
     }
 
     @Override
-    public ServiceResult getByAppId(int appId) {
+    public ServiceResult<?> getByAppId(int appId) {
         ChatBot chatBot = new ChatBot();
         chatBot.setAppId(appId);
         ChatBot chatBotSelected = chatBotMapper.selectOne(chatBot).orElse(null);

@@ -13,6 +13,6 @@ public interface IosVersionService {
      * @param version       当前APP版本
      * @return              版本信息
      */
-    ServiceResult findNewestVersion(String tenantAppId, String version);
+    ServiceResult<?> findNewestVersion(String tenantAppId, String version);
 
 }

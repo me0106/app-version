@@ -32,14 +32,14 @@
 //        uploadFileEntity.setMd5("md5");
 //        uploadFileEntity.setVersionId(14);
 //        Apk apk = new Apk();
-//        ServiceResult serviceResult = channelService.findByChannelCode(uploadFileEntity.getChannel());
+//        ServiceResult<?> serviceResult = channelService.findByChannelCode(uploadFileEntity.getChannel());
 //        if (serviceResult.getCode() == 200) {
 //            Channel channel = (Channel) serviceResult.getData();
 //            apk.setChannelId(channel.getId());
 //            apk.setVersionId(uploadFileEntity.getVersionId());
 //            apk.setOssUrl(uploadFileEntity.getOssUrl());
 //            apk.setMd5(uploadFileEntity.getMd5());
-//            ServiceResult result = apkService.create(apk);
+//            ServiceResult<?> result = apkService.create(apk);
 //            if (result.getData() != null) {
 //                logger.info(result.getData().toString());
 //            }
@@ -71,7 +71,7 @@
 //            wrapper.and().eq("delivery_status", deliveryStatus);
 //        }
 //        wrapper.and().eq("del_flag", 0);
-//        ServiceResult result = apkService.list(1, 2, wrapper, versionId);
+//        ServiceResult<?> result = apkService.list(1, 2, wrapper, versionId);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -93,7 +93,7 @@
 //    @Test
 //    public void delivery() throws Exception {
 //        Integer id = 32;
-//        ServiceResult result = apkService.delivery(id);
+//        ServiceResult<?> result = apkService.delivery(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -114,7 +114,7 @@
 //    @Test
 //    public void undelivery() throws Exception {
 //        Integer id = 32;
-//        ServiceResult result = apkService.undelivery(id);
+//        ServiceResult<?> result = apkService.undelivery(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -135,7 +135,7 @@
 //    @Test
 //    public void delete() throws Exception {
 //        Integer id = 32;
-//        ServiceResult result = apkService.delete(id);
+//        ServiceResult<?> result = apkService.delete(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -157,7 +157,7 @@
 //    public void exists() throws Exception {
 //        String channelCode = "qudao";
 //        Integer versionId = 14;
-//        ServiceResult result = apkService.exists(channelCode, versionId);
+//        ServiceResult<?> result = apkService.exists(channelCode, versionId);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -181,7 +181,7 @@
 //        String channelCode = "qudaocode";
 //        String md5 = "";
 //        Integer deliveryStatus = null;
-//        ServiceResult result = apkService.getApkPageWithChannelCode(1, 10, versionId, channelCode, md5, deliveryStatus);
+//        ServiceResult<?> result = apkService.getApkPageWithChannelCode(1, 10, versionId, channelCode, md5, deliveryStatus);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

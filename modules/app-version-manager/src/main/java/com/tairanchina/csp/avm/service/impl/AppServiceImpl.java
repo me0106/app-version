@@ -40,7 +40,7 @@ public class AppServiceImpl implements AppService {
     private ChannelMapper channelMapper;
 
     @Override
-    public ServiceResult getAppListWithUserId(int page, int pageSize, String userId) {
+    public ServiceResult<?> getAppListWithUserId(int page, int pageSize, String userId) {
         final Example<UserAppRel> example = userAppRelMapper.example();
         example.createCriteria().andEqualTo(UserAppRel::getUserId, userId);
         final Page<UserAppRel> appRels = userAppRelMapper.selectPage(PageRequest.of(page, pageSize), example);
@@ -56,7 +56,7 @@ public class AppServiceImpl implements AppService {
 
     @Override
     @Transactional
-    public ServiceResult createApp(String appName, String tenantAppId) {
+    public ServiceResult<?> createApp(String appName, String tenantAppId) {
         if (!appMapper.selectAppForCreate(appName,tenantAppId).isEmpty()) {
             return ServiceResultConstants.TENANT_APP_ID_OR_APP_NAME_EXISTS;
         }
@@ -92,7 +92,7 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public ServiceResult getMyApp() {
+    public ServiceResult<?> getMyApp() {
         return adminService.listBindApp(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
     }
 }

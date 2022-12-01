@@ -32,11 +32,11 @@
 //        customApi.setCustomContent("content");
 //        customApi.setCustomKey("key");
 //
-//        ServiceResult serviceResult = basicService.checkVersion(customApi);
+//        ServiceResult<?> serviceResult = basicService.checkVersion(customApi);
 //        if (serviceResult.getCode() != 200) {
 //            logger.info("code is not 200..............");
 //        } else {
-//            ServiceResult result = customApiService.createCustomApi(customApi);
+//            ServiceResult<?> result = customApiService.createCustomApi(customApi);
 //            if (result.getData() != null) {
 //                CustomApi a = (CustomApi) result.getData();
 //                logger.info("createCustomApi:" + a.getCustomKey());
@@ -56,11 +56,11 @@
 //        customApi.setAndroidMax("2.0.0");
 //        customApi.setCustomContent("content");
 //        customApi.setCustomKey("key");
-//        ServiceResult serviceResult = basicService.checkVersion(customApi);
+//        ServiceResult<?> serviceResult = basicService.checkVersion(customApi);
 //        if (serviceResult.getCode() != 200) {
 //            logger.info("code is not 200..............");
 //        } else {
-//            ServiceResult result = customApiService.updateCustomApi(customApi);
+//            ServiceResult<?> result = customApiService.updateCustomApi(customApi);
 //            if (result.getData() != null) {
 //                CustomApi a = (CustomApi) result.getData();
 //                logger.info("updateCustomApi:" + a.getCustomName());
@@ -71,7 +71,7 @@
 //
 //    @Test
 //    public void deleteCustomApi() throws Exception {
-//        ServiceResult result = customApiService.deleteCustomApi(2);
+//        ServiceResult<?> result = customApiService.deleteCustomApi(2);
 //        if (result.getData() != null) {
 //            String a = (String) result.getData();
 //            logger.info("软删" + a);
@@ -86,7 +86,7 @@
 //
 //    @Test
 //    public void deleteCustomApiForver() throws Exception {
-//        ServiceResult result = customApiService.deleteCustomApiForver(2);
+//        ServiceResult<?> result = customApiService.deleteCustomApiForver(2);
 //        if (result.getData() != null) {
 //            Integer a = (Integer) result.getData();
 //            logger.info("硬删" + a);
@@ -104,7 +104,7 @@
 //        CustomApi customApi = new CustomApi();
 //        customApi.setId(16);
 //        customApi.setDelFlag(0);
-//        ServiceResult result = customApiService.getCustomApiByOne(customApi);
+//        ServiceResult<?> result = customApiService.getCustomApiByOne(customApi);
 //        if (result.getData() != null) {
 //            CustomApi a = (CustomApi) result.getData();
 //            logger.info("getCustomApiById:" + a.getCustomName());
@@ -128,14 +128,14 @@
 //        } else if ("ios".equals(type)) {
 //            wrapper.andNew().eq("ios_enabled", 1);
 //        }
-//        ServiceResult result = customApiService.list(1, 10, wrapper);
+//        ServiceResult<?> result = customApiService.list(1, 10, wrapper);
 //
 //    }
 //
 //    @Test
 //    public void getCustomApiByKeyAndAppId() throws Exception {
 //        String customKey = "key";
-//        ServiceResult result = customApiService.getCustomApiByKeyAndAppId(customKey);
+//        ServiceResult<?> result = customApiService.getCustomApiByKeyAndAppId(customKey);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

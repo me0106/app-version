@@ -1,14 +1,8 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/app_version_manager?characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://localhost:3306/app_version_manager?characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root
-  data:
-    redis:
-      database: 0
-      port: 6379
-      host: redis
-
 server:
   port: 8086

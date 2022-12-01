@@ -28,7 +28,7 @@ public class AndroidVersionServiceTest extends BaseTest {
         String channelCode = "qudaoncode";
         String platform = "android";
         if ("android".equalsIgnoreCase(platform)) {
-            ServiceResult serviceResult = androidVersionService.findNewestVersion(tenantAppId, version, channelCode);
+            ServiceResult<?> serviceResult = androidVersionService.findNewestVersion(tenantAppId, version, channelCode);
             if (serviceResult.getCode() == 200) {
                 HashMap<String, Object> data = (HashMap<String, Object>) serviceResult.getData();
                 String downloadUrl = (String) data.get("downloadUrl");
@@ -41,7 +41,7 @@ public class AndroidVersionServiceTest extends BaseTest {
         }
 
         channelCode = "aaaa2";
-        ServiceResult serviceResult = androidVersionService.findNewestVersion(tenantAppId, version, channelCode);
+        ServiceResult<?> serviceResult = androidVersionService.findNewestVersion(tenantAppId, version, channelCode);
         if (serviceResult.getData() != null) {
             logger.info(serviceResult.getData().toString());
         }
@@ -68,7 +68,7 @@ public class AndroidVersionServiceTest extends BaseTest {
     @Test
     public void getDownloadUrl() throws Exception {
         Integer apkId = 38;
-        ServiceResult serviceResult = androidVersionService.getDownloadUrl(apkId);
+        ServiceResult<?> serviceResult = androidVersionService.getDownloadUrl(apkId);
         if (serviceResult.getData() != null) {
             logger.info(serviceResult.getData().toString());
         }

@@ -26,7 +26,7 @@ public class OperationRecordLogServiceTest extends BaseTest {
             .setOperator("test")
             .setResultMessage("test")
             .setCreatedBy("test");
-        ServiceResult result = operationRecordLogService.createOperationRecordLog(operationRecordLog);
+        ServiceResult<?> result = operationRecordLogService.createOperationRecordLog(operationRecordLog);
         if (result.getData() != null) {
             System.out.println(result.getData());
         }
@@ -35,7 +35,7 @@ public class OperationRecordLogServiceTest extends BaseTest {
     @Test
     public void deleteOperationRecordLog() throws Exception {
         Integer id = 50;
-        ServiceResult result = operationRecordLogService.deleteOperationRecordLogForever(id);
+        ServiceResult<?> result = operationRecordLogService.deleteOperationRecordLogForever(id);
         if (result.getData() != null) {
             if (result.getData() != null) {
                 System.out.println(result.getData());
@@ -46,7 +46,7 @@ public class OperationRecordLogServiceTest extends BaseTest {
     @Test
     public void deleteOperationRecordLogForever() throws Exception {
         Integer id = 50;
-        ServiceResult result = operationRecordLogService.deleteOperationRecordLogForever(id);
+        ServiceResult<?> result = operationRecordLogService.deleteOperationRecordLogForever(id);
         if (result.getData() != null) {
             System.out.println(result.getData());
         }
@@ -55,7 +55,7 @@ public class OperationRecordLogServiceTest extends BaseTest {
     @Test
     public void getOperationRecordLogById() throws Exception {
         Integer id = 54;
-        ServiceResult result = operationRecordLogService.getOperationRecordLogById(id);
+        ServiceResult<?> result = operationRecordLogService.getOperationRecordLogById(id);
         OperationRecordLog operationRecordLog = (OperationRecordLog) result.getData();
         Object jsonObject = operationRecordLog.getOperationContent();
         System.out.println(jsonObject);
@@ -64,7 +64,7 @@ public class OperationRecordLogServiceTest extends BaseTest {
 
     @Test
     public void getListByQuery() throws Exception {
-        ServiceResult result = operationRecordLogService.getListByQuery(1, 10, null, null, null, null, null, null, null, null);
+        ServiceResult<?> result = operationRecordLogService.getListByQuery(1, 10, null, null, null, null, null, null, null, null);
         if (result.getData() != null) {
             logger.info(result.getData().toString());
         }

@@ -31,11 +31,11 @@
 //        rnRoute.setRouteValue("value");
 //        rnRoute.setRouteName("name");
 //        rnRoute.setRouteStatus(1);
-//        ServiceResult serviceResult = basicService.checkVersion(rnRoute);
+//        ServiceResult<?> serviceResult = basicService.checkVersion(rnRoute);
 //        if (serviceResult.getCode() != 200) {
 //            logger.info("code is not 200..............");
 //        } else {
-//            ServiceResult result = rnRouteService.create(rnRoute);
+//            ServiceResult<?> result = rnRouteService.create(rnRoute);
 //            if (result.getData() != null) {
 //                logger.info(result.getData().toString());
 //            }
@@ -45,7 +45,7 @@
 //    @Test
 //    public void delete() throws Exception {
 //        Integer id = 17;
-//        ServiceResult result = rnRouteService.delete(id);
+//        ServiceResult<?> result = rnRouteService.delete(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -75,18 +75,18 @@
 //        rnRoute.setRouteValue("value");
 //        rnRoute.setRouteName("update");
 //        rnRoute.setRouteStatus(1);
-//        ServiceResult serviceResult = basicService.checkVersion(rnRoute);
+//        ServiceResult<?> serviceResult = basicService.checkVersion(rnRoute);
 //        if (serviceResult.getCode() != 200) {
 //            logger.info("code is not 200..............");
 //        } else {
-//            ServiceResult result = rnRouteService.update(rnRoute);
+//            ServiceResult<?> result = rnRouteService.update(rnRoute);
 //            if (result.getData() != null) {
 //                logger.info(result.getData().toString());
 //            }
 //        }
 //
 //        rnRoute.setId(null);
-//        ServiceResult result = rnRouteService.update(rnRoute);
+//        ServiceResult<?> result = rnRouteService.update(rnRoute);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -140,7 +140,7 @@
 //            wrapper.and().eq("route_status", routeStatus);
 //        }
 //        wrapper.orderBy("created_time", false);
-//        ServiceResult result = rnRouteService.list(1, 10, wrapper);
+//        ServiceResult<?> result = rnRouteService.list(1, 10, wrapper);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }
@@ -149,7 +149,7 @@
 //    @Test
 //    public void find() throws Exception {
 //        Integer id = 17;
-//        ServiceResult result = rnRouteService.find(id);
+//        ServiceResult<?> result = rnRouteService.find(id);
 //        if (result.getData() != null) {
 //            logger.info(result.getData().toString());
 //        }

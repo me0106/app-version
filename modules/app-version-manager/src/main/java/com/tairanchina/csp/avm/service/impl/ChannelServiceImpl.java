@@ -29,7 +29,7 @@ public class ChannelServiceImpl implements ChannelService {
     private ChannelMapper channelMapper;
 
     @Override
-    public ServiceResult createChannel(String channelName, String channelCode, Integer channelType) {
+    public ServiceResult<?> createChannel(String channelName, String channelCode, Integer channelType) {
         final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         List<Channel> channels = channelMapper.selectChannelsForCreate(appId, channelCode, channelName);
         if (!channels.isEmpty()) {
@@ -51,17 +51,17 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public ServiceResult deleteChannel(int channelId) {
+    public ServiceResult<?> deleteChannel(int channelId) {
         return ServiceResultConstants.SERVICE_NOT_SUPPORT;
     }
 
     @Override
-    public ServiceResult deleteChannelForever(int channelId) {
+    public ServiceResult<?> deleteChannelForever(int channelId) {
         return ServiceResultConstants.SERVICE_NOT_SUPPORT;
     }
 
     @Override
-    public ServiceResult scrapChannel(int channelId) {
+    public ServiceResult<?> scrapChannel(int channelId) {
         Channel channel = channelMapper.selectById(channelId);
         if (channel == null) {
             return ServiceResultConstants.CHANNEL_NOT_EXISTS;
@@ -84,7 +84,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public ServiceResult openChannel(int channelId) {
+    public ServiceResult<?> openChannel(int channelId) {
         Channel channel = channelMapper.selectById(channelId);
         if (channel == null) {
             return ServiceResultConstants.CHANNEL_NOT_EXISTS;
@@ -104,14 +104,14 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, Example<Channel> wrapper) {
+    public ServiceResult<?> list(int page, int pageSize, Example<Channel> wrapper) {
         final Page<Channel> channels = channelMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
         basicService.formatCreatedBy(channels);
         return ServiceResult.ok(channels);
     }
 
     @Override
-    public ServiceResult findChannel(int channelId) {
+    public ServiceResult<?> findChannel(int channelId) {
         Channel channel = channelMapper.selectById(channelId);
         if (channel == null) {
             return ServiceResultConstants.CHANNEL_NOT_EXISTS;
@@ -123,7 +123,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public ServiceResult findByChannelCode(String channelCode) {
+    public ServiceResult<?> findByChannelCode(String channelCode) {
         final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         List<Channel> channels = channelMapper.wrapper().eq(Channel::getChannelCode, channelCode).eq(Channel::getAppId, appId).endSql("LIMIT 1").list();
         if (!channels.isEmpty()) {

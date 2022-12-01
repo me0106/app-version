@@ -33,7 +33,7 @@ public class CustomApiServiceImpl implements CustomApiService {
     private AppService appService;
 
     @Override
-    public ServiceResult getCustomContent(String tenantAppId, String key, String platform, String version) {
+    public ServiceResult<?> getCustomContent(String tenantAppId, String key, String platform, String version) {
         App app = appService.findAppByTenantAppId(tenantAppId);
         if (app == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;

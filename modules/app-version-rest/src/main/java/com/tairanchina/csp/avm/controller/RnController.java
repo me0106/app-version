@@ -32,7 +32,7 @@ public class RnController {
         @Parameter(name = "platform", description = "平台，值应为 ios 或 android", required = true),
         @Parameter(name = "status", description = "RN路由状态，0:关闭 1:线上开启 2:测试需要", required = true),
     })
-    public ServiceResult route(@PathVariable String version,
+    public ServiceResult<?> route(@PathVariable String version,
                                @PathVariable String tenantAppId,
                                @PathVariable String platform,
                                @PathVariable Integer status) {
@@ -53,7 +53,7 @@ public class RnController {
         @Parameter(name = "platform", description = "平台，值应为 ios 或 android", required = true),
         @Parameter(name = "status", description = "RN包状态，0:关闭 1:线上开启 2:测试需要", required = true),
     })
-    public ServiceResult bundles(@PathVariable String version,
+    public ServiceResult<?> bundles(@PathVariable String version,
                                  @PathVariable String tenantAppId,
                                  @PathVariable String platform,
                                  @PathVariable Integer status) {

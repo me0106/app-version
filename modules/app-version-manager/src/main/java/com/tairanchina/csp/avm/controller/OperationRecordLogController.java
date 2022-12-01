@@ -32,7 +32,7 @@ public class OperationRecordLogController {
         @Parameter(name = "id", description = "操作日志id"),
     })
     @GetMapping("/{id}")
-    public ServiceResult getOperationRecordLog(@PathVariable Integer id) {
+    public ServiceResult<?> getOperationRecordLog(@PathVariable Integer id) {
         return operationRecordLogService.getOperationRecordLogById(id);
     }
 
@@ -52,7 +52,7 @@ public class OperationRecordLogController {
         @Parameter(name = "endDate", description = "查询结束时间"),
     })
     @GetMapping
-    public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false) String operationType, //这里的操作类型实际为操作描述（中文的），是根据操作资源查对应的操作类型查出来的
                               @RequestParam(required = false) String operationResource,
@@ -67,13 +67,13 @@ public class OperationRecordLogController {
 
     @PutMapping("/delete/{id}")
 //    @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.OPETATION_RECORD_LOG, description = OperationRecordLog.OperationDescription.DELETE_OPETATION_RECORD_LOG)
-    public ServiceResult delete(@PathVariable Integer id) {
+    public ServiceResult<?> delete(@PathVariable Integer id) {
         return operationRecordLogService.deleteOperationRecordLog(id);
     }
 
     @DeleteMapping("/{id}")
 //    @OperationRecord(type = OperationRecordLog.OperationType.DELETE_FOREVER, resource = OperationRecordLog.OperationResource.OPETATION_RECORD_LOG, description = OperationRecordLog.OperationDescription.DELETE_FOREVER_OPETATION_RECORD_LOG)
-    public ServiceResult deleteForever(@PathVariable Integer id) {
+    public ServiceResult<?> deleteForever(@PathVariable Integer id) {
         return operationRecordLogService.deleteOperationRecordLogForever(id);
     }
 
@@ -85,7 +85,7 @@ public class OperationRecordLogController {
     @Parameters({
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
-    public ServiceResult getOperationType() {
+    public ServiceResult<?> getOperationType() {
         Map<Enum, String> typeMap = new HashMap<>();
         for (OperationRecordLog.OperationType t : OperationRecordLog.OperationType.values()) {
             typeMap.put(t, t.getName());
@@ -101,7 +101,7 @@ public class OperationRecordLogController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/resource")
-    public ServiceResult getOperationResource() {
+    public ServiceResult<?> getOperationResource() {
         Map<Enum, String> resourceMap = new HashMap<>();
         for (OperationRecordLog.OperationResource r : OperationRecordLog.OperationResource.values()) {
             resourceMap.put(r, r.getName());
@@ -117,7 +117,7 @@ public class OperationRecordLogController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{resource}/type")
-    public ServiceResult getOperationResourceType(@PathVariable String resource) {
+    public ServiceResult<?> getOperationResourceType(@PathVariable String resource) {
         Map<Enum, String> resourceMap = new HashMap<>();
         for (OperationRecordLog.OperationDescription r : OperationRecordLog.OperationDescription.values()) {
             if (r.toString().endsWith("_" + resource.toUpperCase())) {

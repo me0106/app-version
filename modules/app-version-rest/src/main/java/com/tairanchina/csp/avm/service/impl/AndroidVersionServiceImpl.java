@@ -50,7 +50,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     private ApkMapper apkMapper;
 
     @Override
-    public ServiceResult findNewestVersion(String tenantAppId, String version, String channelCode) {
+    public ServiceResult<?> findNewestVersion(String tenantAppId, String version, String channelCode) {
         logger.debug("查询tenantAppId为{}的应用...", tenantAppId);
         App appSelected = appService.findAppByTenantAppId(tenantAppId);
         if (appSelected == null) {
@@ -129,7 +129,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
     }
 
     @Override
-    public ServiceResult getDownloadUrl(int apkId) {
+    public ServiceResult<?> getDownloadUrl(int apkId) {
         Apk apk = apkMapper.selectById(apkId);
         if (apk == null) {
             return ServiceResultConstants.APK_NOT_EXISTS;
@@ -139,7 +139,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
 
 
     @Override
-    public ServiceResult findNewestApk(String tenantAppId, String channelCode) {
+    public ServiceResult<?> findNewestApk(String tenantAppId, String channelCode) {
         logger.debug("查询tenantAppId为{}的应用...", tenantAppId);
         App appSelected = appService.findAppByTenantAppId(tenantAppId);
         if (appSelected == null) {
@@ -200,7 +200,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
 
     }
 
-    private ServiceResult loopSelectAndroidVersions(List<AndroidVersion> list, int appId, int channelId) {
+    private ServiceResult<?> loopSelectAndroidVersions(List<AndroidVersion> list, int appId, int channelId) {
         for (AndroidVersion androidVersion : list) {
             int versionId = androidVersion.getId();
             Apk apk = new Apk();

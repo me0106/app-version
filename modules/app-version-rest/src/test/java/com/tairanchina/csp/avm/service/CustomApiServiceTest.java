@@ -20,7 +20,7 @@ public class CustomApiServiceTest extends BaseTest {
         String key = "test";
         String platfrom = "ios";
         String version = "1.0.0.0.1";
-        ServiceResult result = customApiService.getCustomContent(tenantAppId, key, platfrom, version);
+        ServiceResult<?> result = customApiService.getCustomContent(tenantAppId, key, platfrom, version);
         if (result.getData() != null) {
             logger.info(result.getData().toString());
         }

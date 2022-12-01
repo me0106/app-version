@@ -42,7 +42,7 @@ public class UserInterceptor implements HandlerInterceptor {
         if (authorization.startsWith("Bearer ")) {
             String substring = authorization.substring(7);
             try {
-                ServiceResult validate = userService.validate(substring);
+                ServiceResult<?> validate = userService.validate(substring);
                 if (validate.getCode() == 200) {
                     Integer appId = null;
                     String appIdFromHeader = request.getHeader("appId");

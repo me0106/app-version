@@ -9,15 +9,15 @@ import io.mybatis.mapper.example.Example;
  */
 public interface ApkService {
 
-    ServiceResult create(Apk apk);
+    ServiceResult<?> create(Apk apk);
 
-    ServiceResult list(int page, int pageSize, Example<Apk> wrapper, int versionId);
+    ServiceResult<?> list(int page, int pageSize, Example<Apk> wrapper, int versionId);
 
-    ServiceResult delivery(int apkId);
+    ServiceResult<?> delivery(int apkId);
 
-    ServiceResult undelivery(int apkId);
+    ServiceResult<?> undelivery(int apkId);
 
-    ServiceResult delete(int apkId);
+    ServiceResult<?> delete(int apkId);
 
     /**
      * 查询某个版本某个渠道码是否已经存在APK包
@@ -26,10 +26,10 @@ public interface ApkService {
      * @param versionId
      * @return
      */
-    ServiceResult exists(String channelCode, int versionId);
+    ServiceResult<?> exists(String channelCode, int versionId);
 
     /**
      * 分页查询apk,查询条件有channelCode
      */
-    ServiceResult getApkPageWithChannelCode(int page, int pageSize, Integer versionId, String channelCode, String md5, Integer deliveryStatus);
+    ServiceResult<?> getApkPageWithChannelCode(int page, int pageSize, Integer versionId, String channelCode, String md5, Integer deliveryStatus);
 }

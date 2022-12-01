@@ -41,7 +41,7 @@ public class IosController {
         @Parameter(name = "updateType", description = "更新类型，0：强制更新 1：一般更新 2：静默更新 3：可忽略更新 4：静默可忽略更新"),
         @Parameter(name = "versionStatus", description = "上架状态，0-未上架；1-已上架"),})
     @GetMapping
-    public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false, defaultValue = "") String appVersion,
                               @RequestParam(required = false, defaultValue = "") Integer updateType,
@@ -68,7 +68,7 @@ public class IosController {
     })
     @PostMapping
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.CREATE_IOS_VERSION)
-    public ServiceResult create(@RequestBody IosVersionRequestDTO iosVersionRequestDTO) {
+    public ServiceResult<?> create(@RequestBody IosVersionRequestDTO iosVersionRequestDTO) {
 
         String appVersion = iosVersionRequestDTO.getAppVersion();
         String allowLowestVersion = iosVersionRequestDTO.getAllowLowestVersion();
@@ -102,7 +102,7 @@ public class IosController {
     })
     @PutMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.UPDATE_IOS_VERSION)
-    public ServiceResult update(@RequestBody IosVersionRequestDTO iosVersionRequestDTO, @PathVariable int id) {
+    public ServiceResult<?> update(@RequestBody IosVersionRequestDTO iosVersionRequestDTO, @PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -125,7 +125,7 @@ public class IosController {
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.DELETE_IOS_VERSION)
-    public ServiceResult delete(@PathVariable int id) {
+    public ServiceResult<?> delete(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -136,7 +136,7 @@ public class IosController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/versions")
-    public ServiceResult versions() {
+    public ServiceResult<?> versions() {
         return iosVersionService.listAllVersion();
     }
 
@@ -144,7 +144,7 @@ public class IosController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{id}")
-    public ServiceResult get(@PathVariable int id) {
+    public ServiceResult<?> get(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -156,7 +156,7 @@ public class IosController {
     })
     @PutMapping("/{id}/delivery")
     @OperationRecord(type = OperationRecordLog.OperationType.DELIVERY, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.DELIVERY_IOS_VERSION)
-    public ServiceResult delivery(@PathVariable int id) {
+    public ServiceResult<?> delivery(@PathVariable int id) {
         return iosVersionService.delivery(id);
     }
 
@@ -165,7 +165,7 @@ public class IosController {
     })
     @PutMapping("/{id}/undelivery")
     @OperationRecord(type = OperationRecordLog.OperationType.UNDELIVERY, resource = OperationRecordLog.OperationResource.IOS_VERSION, description = OperationRecordLog.OperationDescription.UNDELIVERY_IOS_VERSION)
-    public ServiceResult undelivery(@PathVariable int id) {
+    public ServiceResult<?> undelivery(@PathVariable int id) {
         return iosVersionService.undelivery(id);
     }
 

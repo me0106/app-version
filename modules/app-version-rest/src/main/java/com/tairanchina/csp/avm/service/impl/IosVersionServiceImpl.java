@@ -36,7 +36,7 @@ public class IosVersionServiceImpl implements IosVersionService {
     private AppService appService;
 
     @Override
-    public ServiceResult findNewestVersion(String tenantAppId, String version) {
+    public ServiceResult<?> findNewestVersion(String tenantAppId, String version) {
         logger.debug("查询tenantAppId为{}的应用...", tenantAppId);
         App appSelected = appService.findAppByTenantAppId(tenantAppId);
         if (appSelected == null) {
@@ -85,7 +85,7 @@ public class IosVersionServiceImpl implements IosVersionService {
         map.put("description", iosVersion.getVersionDescription());
         map.put("forceUpdate", iosVersion.getUpdateType());
         map.put("version", iosVersion.getAppVersion());
-        ServiceResult ok = ServiceResult.ok(map);
+        ServiceResult<?> ok = ServiceResult.ok(map);
         logger.debug("结果：{}", Json.toJsonString(ok));
         return ok;
     }

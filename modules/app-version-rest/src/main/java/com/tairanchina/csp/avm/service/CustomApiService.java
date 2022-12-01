@@ -7,6 +7,6 @@ import com.tairanchina.csp.avm.dto.ServiceResult;
  */
 public interface CustomApiService {
 
-    ServiceResult getCustomContent(String tenantAppId, String key, String platfrom, String version);
+    ServiceResult<?> getCustomContent(String tenantAppId, String key, String platfrom, String version);
 
 }

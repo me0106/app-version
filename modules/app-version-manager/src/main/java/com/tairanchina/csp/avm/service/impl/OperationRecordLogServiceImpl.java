@@ -25,7 +25,7 @@ public class OperationRecordLogServiceImpl implements OperationRecordLogService 
     private BasicService basicService;
 
     @Override
-    public ServiceResult createOperationRecordLog(OperationRecordLog operationRecordLog) {
+    public ServiceResult<?> createOperationRecordLog(OperationRecordLog operationRecordLog) {
         operationRecordLog.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         operationRecordLog.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         int result = operationRecordLogMapper.insert(operationRecordLog);
@@ -37,7 +37,7 @@ public class OperationRecordLogServiceImpl implements OperationRecordLogService 
     }
 
     @Override
-    public ServiceResult deleteOperationRecordLog(Integer id) {
+    public ServiceResult<?> deleteOperationRecordLog(Integer id) {
         OperationRecordLog operationRecordLog = operationRecordLogMapper.selectById(id);
         if (null == operationRecordLog) {
             return ServiceResultConstants.OPERATION_LOG_NOT_EXISTS;
@@ -54,7 +54,7 @@ public class OperationRecordLogServiceImpl implements OperationRecordLogService 
     }
 
     @Override
-    public ServiceResult deleteOperationRecordLogForever(Integer id) {
+    public ServiceResult<?> deleteOperationRecordLogForever(Integer id) {
         OperationRecordLog operationRecordLog = operationRecordLogMapper.selectById(id);
         if (null == operationRecordLog) {
             return ServiceResultConstants.OPERATION_LOG_NOT_EXISTS;
@@ -68,14 +68,14 @@ public class OperationRecordLogServiceImpl implements OperationRecordLogService 
     }
 
     @Override
-    public ServiceResult getOperationRecordLogById(Integer id) {
+    public ServiceResult<?> getOperationRecordLogById(Integer id) {
         OperationRecordLog operationRecordLog = operationRecordLogMapper.selectById(id);
         return ServiceResult.ok(operationRecordLog);
     }
 
 
     @Override
-    public ServiceResult getListByQuery(int page, int pageSize, String phone, String nickName, Integer appId, String operationResource, String operationDescription, String operationType,
+    public ServiceResult<?> getListByQuery(int page, int pageSize, String phone, String nickName, Integer appId, String operationResource, String operationDescription, String operationType,
                                         String startDate, String endDate) {
         final Query query = new Query(phone, nickName, appId, operationResource, operationDescription, operationType, startDate, endDate);
         Page<OperationRecordLogExt> list = operationRecordLogMapper.selectLogExtByQuery(PageRequest.of(page, pageSize), query);

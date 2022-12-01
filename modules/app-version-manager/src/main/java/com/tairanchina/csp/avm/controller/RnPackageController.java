@@ -48,7 +48,7 @@ public class RnPackageController {
         @Parameter(name = "rnStatus", description = "RN包状态，0:关闭 1:线上开启 2:测试需要"),
     })
     @GetMapping
-    public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false, defaultValue = "") String rnName,
                               @RequestParam(required = false, defaultValue = "") String rnNickName,
@@ -74,7 +74,7 @@ public class RnPackageController {
     })
     @PostMapping
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.RN_PACKAGE, description = OperationRecordLog.OperationDescription.CREATE_RN_PACKAGE)
-    public ServiceResult create(@RequestBody RnPackageRequestDTO rnPackageRequestDTO) {
+    public ServiceResult<?> create(@RequestBody RnPackageRequestDTO rnPackageRequestDTO) {
         if (StringUtilsExt.hasEmpty(
             rnPackageRequestDTO.getRnName(),
             rnPackageRequestDTO.getRnNickName(),
@@ -101,7 +101,7 @@ public class RnPackageController {
     })
     @PutMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.RN_PACKAGE, description = OperationRecordLog.OperationDescription.UPDATE_RN_PACKAGE)
-    public ServiceResult update(@PathVariable int id, @RequestBody RnPackageRequestDTO rnPackageRequestDTO) {
+    public ServiceResult<?> update(@PathVariable int id, @RequestBody RnPackageRequestDTO rnPackageRequestDTO) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -122,7 +122,7 @@ public class RnPackageController {
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.RN_PACKAGE, description = OperationRecordLog.OperationDescription.DELETE_RN_PACKAGE)
-    public ServiceResult delete(@PathVariable int id) {
+    public ServiceResult<?> delete(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -133,7 +133,7 @@ public class RnPackageController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{id}")
-    public ServiceResult find(@PathVariable int id) {
+    public ServiceResult<?> find(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }

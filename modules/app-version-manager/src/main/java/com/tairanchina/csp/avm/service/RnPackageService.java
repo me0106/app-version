@@ -15,21 +15,21 @@ public interface RnPackageService {
      * @param rnPackage
      * @return
      */
-    ServiceResult create(RnPackage rnPackage);
+    ServiceResult<?> create(RnPackage rnPackage);
 
     /**
      * 删除路由
      * @param id
      * @return
      */
-    ServiceResult delete(int id);
+    ServiceResult<?> delete(int id);
 
     /**
      * 更新路由
      * @param rnPackage
      * @return
      */
-    ServiceResult update(RnPackage rnPackage);
+    ServiceResult<?> update(RnPackage rnPackage);
 
     /**
      * 列表
@@ -38,7 +38,7 @@ public interface RnPackageService {
      * @param wrapper
      * @return
      */
-    ServiceResult list(int page, int pageSize, Example<RnPackage> wrapper);
+    ServiceResult<?> list(int page, int pageSize, Example<RnPackage> wrapper);
 
     /**
      *
@@ -47,7 +47,7 @@ public interface RnPackageService {
      * @param wrapper
      * @return
      */
-    ServiceResult listSort(int page, int pageSize, Example<RnPackage> wrapper);
+    ServiceResult<?> listSort(int page, int pageSize, Example<RnPackage> wrapper);
 
     /**
      * 根据条件获取两版本之间的所有版本
@@ -56,13 +56,13 @@ public interface RnPackageService {
      * @param wrapper       查询条件
      * @return
      */
-    ServiceResult findBetweenVersionList(String version1, String version2, Example<RnPackage>  wrapper);
+    ServiceResult<?> findBetweenVersionList(String version1, String version2, Example<RnPackage>  wrapper);
 
     /**
      * 根据ID查询
      * @param id
      * @return
      */
-    ServiceResult find(int id);
+    ServiceResult<?> find(int id);
 
 }

@@ -38,9 +38,6 @@ public class VersionController {
     @Autowired
     private IosVersionService iosVersionService;
 
-    @Value("${spring.profiles.active}")
-    private String active;
-
     @Value("${rest.base.url}")
     private String baseUrl;
 
@@ -61,13 +58,13 @@ public class VersionController {
         @Parameter(name = "platform", description = "平台，值应为 ios 或 android", required = true),
     })
     @GetMapping("/{tenantAppId}-{version}-{channelCode}-{platform}")
-    public ServiceResult version(@PathVariable String tenantAppId,
+    public ServiceResult<?> version(@PathVariable String tenantAppId,
                                  @PathVariable String version,
                                  @PathVariable String channelCode,
                                  @PathVariable String platform) {
         logger.info("appId={},version={},channelCode={},platform={}", tenantAppId, version, channelCode, platform);
         if ("android".equalsIgnoreCase(platform)) {
-            ServiceResult serviceResult = androidVersionService.findNewestVersion(tenantAppId, version, channelCode);
+            ServiceResult<?> serviceResult = androidVersionService.findNewestVersion(tenantAppId, version, channelCode);
             if (serviceResult.getCode() == 200) {
                 HashMap<String, Object> data = (HashMap<String, Object>) serviceResult.getData();
                 String downloadUrl = (String) data.get("downloadUrl");
@@ -105,13 +102,13 @@ public class VersionController {
         @Parameter(name = "apkId", description = "APK包的ID", required = true),
     })
     @GetMapping("/download/{apkId}")
-    public ServiceResult download(@PathVariable int apkId) throws IOException {
+    public ServiceResult<?> download(@PathVariable int apkId) throws IOException {
         logger.info("下载了APK[{}]", apkId);
 
         if (apkId < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         } else {
-            ServiceResult serviceResult = androidVersionService.getDownloadUrl(apkId);
+            ServiceResult<?> serviceResult = androidVersionService.getDownloadUrl(apkId);
             if (serviceResult.getCode() != 200) {
                 return serviceResult;
             } else {
@@ -135,7 +132,7 @@ public class VersionController {
         @Parameter(name = "appId", description = "应用的appId", example = "uc28ec7f8870a6e785", required = true),
         @Parameter(name = "channelCode", description = "渠道码，非必填，默认为下载官方渠道的APK包", example = "official"),
     })
-    public ServiceResult downloadAPK(@PathVariable String appId, @RequestParam(required = false) String channelCode) {
+    public ServiceResult<?> downloadAPK(@PathVariable String appId, @RequestParam(required = false) String channelCode) {
         return androidVersionService.findNewestApk(appId, channelCode);
     }
 }

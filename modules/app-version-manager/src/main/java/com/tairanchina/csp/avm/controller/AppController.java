@@ -27,7 +27,7 @@ public class AppController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping
-    public ServiceResult app(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> app(@RequestParam(required = false, defaultValue = "1") int page,
                              @RequestParam(required = false, defaultValue = "10") int pageSize) {
         return appService.getAppListWithUserId(page, pageSize, ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
     }
@@ -48,7 +48,7 @@ public class AppController {
     })
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.APP, description = OperationRecordLog.OperationDescription.CREATE_APP)
     @PostMapping
-    public ServiceResult createApp(@RequestBody AppRequestDTO appRequestDTO) {
+    public ServiceResult<?> createApp(@RequestBody AppRequestDTO appRequestDTO) {
         return appService.createApp(appRequestDTO.getAppName(), appRequestDTO.getTenantAppId());
     }
 
@@ -57,7 +57,7 @@ public class AppController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/bind")
-    public ServiceResult myApp() {
+    public ServiceResult<?> myApp() {
         return appService.getMyApp();
     }
 

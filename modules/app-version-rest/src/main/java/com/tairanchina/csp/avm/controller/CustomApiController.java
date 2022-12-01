@@ -38,7 +38,7 @@ public class CustomApiController {
             @Parameter(name = "version", description = "版本号", required = true),
     })
     @GetMapping("/{tenantAppId}/{key}/{version}/{platform}")
-    public ServiceResult custom(@PathVariable String tenantAppId,
+    public ServiceResult<?> custom(@PathVariable String tenantAppId,
                                 @PathVariable String key,
                                 @PathVariable String platform,
                                 @PathVariable String version) {

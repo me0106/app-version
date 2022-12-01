@@ -10,7 +10,11 @@
 
 * 暂时移除mq相关功能
 
-ifndef::imagesdir[:imagesdir: src/main/resources/images/]
+* 镜像打包改为 `jib`
+
+'''
+
+ifndef::imagesdir[:imagesdir: modules/app-version-doc/src/main/asciidoc/images]
 
 image::logo.png[logo,200,200,align="center"]
 

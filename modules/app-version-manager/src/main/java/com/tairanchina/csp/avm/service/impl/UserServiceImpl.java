@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     private TokenService tokenService;
 
     @Override
-    public ServiceResult register(String phone, String password) {
+    public ServiceResult<?> register(String phone, String password) {
         if (StringUtilsExt.hasEmpty(password, phone)) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResult login(String phone, String password) {
+    public ServiceResult<?> login(String phone, String password) {
         if (StringUtilsExt.hasEmpty(password, phone)) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResult validate(String jwt) {
+    public ServiceResult<?> validate(String jwt) {
         JWTSubject jwtSubject = tokenService.validateJWT(jwt);
         if (Objects.isNull(jwtSubject)) {
             return ServiceResultConstants.JWT_ERROR;
@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResult changePassword(String oldPassword, String password) {
+    public ServiceResult<?> changePassword(String oldPassword, String password) {
         if (StringUtilsExt.hasEmpty(password, oldPassword)) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -141,7 +141,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResult updateUserNickNameByUserId(String userId, String nickName) {
+    public ServiceResult<?> updateUserNickNameByUserId(String userId, String nickName) {
         User user = new User();
         user.setUserId(userId);
         User u = userMapper.selectOne(user).orElse(null);

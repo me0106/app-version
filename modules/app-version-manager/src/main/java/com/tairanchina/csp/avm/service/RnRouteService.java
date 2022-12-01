@@ -14,21 +14,21 @@ public interface RnRouteService {
      * @param rnRoute
      * @return
      */
-    ServiceResult create(RnRoute rnRoute);
+    ServiceResult<?> create(RnRoute rnRoute);
 
     /**
      * 删除路由
      * @param id
      * @return
      */
-    ServiceResult delete(int id);
+    ServiceResult<?> delete(int id);
 
     /**
      * 更新路由
      * @param rnRoute
      * @return
      */
-    ServiceResult update(RnRoute rnRoute);
+    ServiceResult<?> update(RnRoute rnRoute);
 
     /**
      * 列表
@@ -37,13 +37,13 @@ public interface RnRouteService {
      * @param wrapper
      * @return
      */
-    ServiceResult list(int page, int pageSize, Example<RnRoute> wrapper);
+    ServiceResult<?> list(int page, int pageSize, Example<RnRoute> wrapper);
 
     /**
      * 根据ID查询
      * @param id
      * @return
      */
-    ServiceResult find(int id);
+    ServiceResult<?> find(int id);
 
 }

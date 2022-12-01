@@ -31,7 +31,7 @@ public class RnPackageServiceImpl implements RnPackageService {
     private BasicService basicService;
 
     @Override
-    public ServiceResult create(RnPackage rnPackage) {
+    public ServiceResult<?> create(RnPackage rnPackage) {
         rnPackage.setId(null);
         rnPackage.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         rnPackage.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
@@ -44,7 +44,7 @@ public class RnPackageServiceImpl implements RnPackageService {
     }
 
     @Override
-    public ServiceResult delete(int id) {
+    public ServiceResult<?> delete(int id) {
         RnPackage rnPackage = rnPackageMapper.selectById(id);
         if (rnPackage == null) {
             return ServiceResultConstants.RN_ROUTE_NOT_EXISTS;
@@ -62,7 +62,7 @@ public class RnPackageServiceImpl implements RnPackageService {
     }
 
     @Override
-    public ServiceResult update(RnPackage rnPackage) {
+    public ServiceResult<?> update(RnPackage rnPackage) {
         if (rnPackage.getId() == null || rnPackage.getId() < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -84,7 +84,7 @@ public class RnPackageServiceImpl implements RnPackageService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, Example<RnPackage> wrapper) {
+    public ServiceResult<?> list(int page, int pageSize, Example<RnPackage> wrapper) {
         final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         wrapper.createCriteria().andEqualTo(RnPackage::getAppId, appId);
         final Page<RnPackage> packages = rnPackageMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
@@ -93,7 +93,7 @@ public class RnPackageServiceImpl implements RnPackageService {
     }
 
     @Override
-    public ServiceResult listSort(int page, int pageSize, Example<RnPackage> wrapper) {
+    public ServiceResult<?> listSort(int page, int pageSize, Example<RnPackage> wrapper) {
         final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         wrapper.createCriteria().andEqualTo(RnPackage::getAppId, appId);
         List<RnPackage> rnPackages = rnPackageMapper.selectByExample(wrapper);
@@ -105,7 +105,7 @@ public class RnPackageServiceImpl implements RnPackageService {
     }
 
     @Override
-    public ServiceResult findBetweenVersionList(String version1, String version2, Example<RnPackage> wrapper) {
+    public ServiceResult<?> findBetweenVersionList(String version1, String version2, Example<RnPackage> wrapper) {
         List<RnPackage> rnPageVersions = rnPackageMapper.selectByExample(wrapper);
         String max = VersionCompareUtils.compareVersion(version1, version2) >= 0 ? version1 : version2;
         String min = VersionCompareUtils.compareVersion(version1, version2) <= 0 ? version1 : version2;
@@ -116,7 +116,7 @@ public class RnPackageServiceImpl implements RnPackageService {
     }
 
     @Override
-    public ServiceResult find(int id) {
+    public ServiceResult<?> find(int id) {
         RnPackage rnPackage = rnPackageMapper.selectById(id);
         if (rnPackage == null) {
             return ServiceResultConstants.RN_ROUTE_NOT_EXISTS;

@@ -35,7 +35,7 @@ public class ChatBotController {
         @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true)
     })
     @GetMapping("/getByAppId/{appId}")
-    public ServiceResult getByAppId(@PathVariable Integer appId) {
+    public ServiceResult<?> getByAppId(@PathVariable Integer appId) {
         if (appId == null || appId == 0) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -47,7 +47,7 @@ public class ChatBotController {
         @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true)
     })
     @GetMapping("/event")
-    public ServiceResult listEvent() {
+    public ServiceResult<?> listEvent() {
         List<HashMap<String, String>> collect = Arrays.stream(ChatBotEventType.values()).map(chatBotEventType -> {
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put("event", chatBotEventType.name());
@@ -63,7 +63,7 @@ public class ChatBotController {
         @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true)
     })
     @PostMapping
-    public ServiceResult create(@RequestBody ChatBotReq chatBot) {
+    public ServiceResult<?> create(@RequestBody ChatBotReq chatBot) {
         List<ChatBotEventType> events = this.eventTypeFormat(chatBot.getEvents());
         if (events.size() == 0) {
             return ServiceResultConstants.CHAT_BOT_EVENT_NOT_EXIST;
@@ -76,7 +76,7 @@ public class ChatBotController {
         @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true)
     })
     @PutMapping
-    public ServiceResult edit(@RequestBody ChatBotReq chatBot) {
+    public ServiceResult<?> edit(@RequestBody ChatBotReq chatBot) {
         List<ChatBotEventType> events = this.eventTypeFormat(chatBot.getEvents());
         if (events.size() == 0) {
             return ServiceResultConstants.CHAT_BOT_EVENT_NOT_EXIST;
@@ -89,7 +89,7 @@ public class ChatBotController {
         @Parameter(in = ParameterIn.HEADER, name = "Authorization", description = "用户凭证", required = true)
     })
     @DeleteMapping("/{appId}")
-    public ServiceResult delete(@PathVariable Integer appId) {
+    public ServiceResult<?> delete(@PathVariable Integer appId) {
         return chatBotService.deleteChatBot(appId);
     }
 

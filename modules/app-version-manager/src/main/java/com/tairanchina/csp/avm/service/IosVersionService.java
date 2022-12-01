@@ -14,21 +14,21 @@ public interface IosVersionService {
      * @param iosVersion
      * @return
      */
-    ServiceResult create(IosVersion iosVersion);
+    ServiceResult<?> create(IosVersion iosVersion);
 
     /**
      * 更新iOS版本
      * @param iosVersion
      * @return
      */
-    ServiceResult update(IosVersion iosVersion);
+    ServiceResult<?> update(IosVersion iosVersion);
 
     /**
      * 删除一个版本
      * @param id
      * @return
      */
-    ServiceResult delete(int id);
+    ServiceResult<?> delete(int id);
 
     /**
      * 列表
@@ -37,7 +37,7 @@ public interface IosVersionService {
      * @param wrapper
      * @return
      */
-    ServiceResult list(int page, int pageSize, Example<IosVersion> wrapper);
+    ServiceResult<?> list(int page, int pageSize, Example<IosVersion> wrapper);
 
     /**
      * 列表
@@ -46,7 +46,7 @@ public interface IosVersionService {
      * @param wrapper
      * @return
      */
-    ServiceResult listSort(int page, int pageSize, Example<IosVersion> wrapper);
+    ServiceResult<?> listSort(int page, int pageSize, Example<IosVersion> wrapper);
 
     /**
      * 根据条件获取两版本之间的所有版本
@@ -55,33 +55,33 @@ public interface IosVersionService {
      * @param wrapper       查询条件
      * @return
      */
-    ServiceResult findBetweenVersionList(String version1, String version2, Example<IosVersion> wrapper);
+    ServiceResult<?> findBetweenVersionList(String version1, String version2, Example<IosVersion> wrapper);
 
     /**
      * 列出当前所有版本
      * @return
      */
-    ServiceResult listAllVersion();
+    ServiceResult<?> listAllVersion();
 
     /**
      * 上架iOS
      * @param id
      * @return
      */
-    ServiceResult delivery(int id);
+    ServiceResult<?> delivery(int id);
 
     /**
      * 下架iOS
      * @param id
      * @return
      */
-    ServiceResult undelivery(int id);
+    ServiceResult<?> undelivery(int id);
 
     /**
      * 获取一个版本
      * @param id
      * @return
      */
-    ServiceResult get(int id);
+    ServiceResult<?> get(int id);
 
 }

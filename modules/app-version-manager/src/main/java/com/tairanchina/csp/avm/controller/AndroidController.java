@@ -49,7 +49,7 @@ public class AndroidController {
         @Parameter(name = "versionStatus", description = "上架状态，0-未上架；1-已上架"),
     })
     @GetMapping
-    public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false, defaultValue = "") String appVersion,
                               @RequestParam(required = false, defaultValue = "") Integer updateType,
@@ -76,7 +76,7 @@ public class AndroidController {
     })
     @PostMapping
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.ANDROID_VERSION, description = OperationRecordLog.OperationDescription.CREATE_ANDROID_VERSION)
-    public ServiceResult create(@RequestBody AndroidVersionRequestDTO androidVersionRequestDTO) {
+    public ServiceResult<?> create(@RequestBody AndroidVersionRequestDTO androidVersionRequestDTO) {
         String appVersion = androidVersionRequestDTO.getAppVersion();
         String allowLowestVersion = androidVersionRequestDTO.getAllowLowestVersion();
         String versionDescription = androidVersionRequestDTO.getVersionDescription();
@@ -107,7 +107,7 @@ public class AndroidController {
     })
     @PutMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.ANDROID_VERSION, description = OperationRecordLog.OperationDescription.UPDATE_ANDROID_VERSION)
-    public ServiceResult update(@RequestBody AndroidVersionRequestDTO androidVersionRequestDTO, @PathVariable int id) {
+    public ServiceResult<?> update(@RequestBody AndroidVersionRequestDTO androidVersionRequestDTO, @PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -129,7 +129,7 @@ public class AndroidController {
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.ANDROID_VERSION, description = OperationRecordLog.OperationDescription.DELETE_ANDROID_VERSION)
-    public ServiceResult delete(@PathVariable int id) {
+    public ServiceResult<?> delete(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -140,7 +140,7 @@ public class AndroidController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/versions")
-    public ServiceResult versions() {
+    public ServiceResult<?> versions() {
         return androidVersionService.listAllVersion();
     }
 
@@ -148,7 +148,7 @@ public class AndroidController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{id}")
-    public ServiceResult get(@PathVariable int id) {
+    public ServiceResult<?> get(@PathVariable int id) {
         if (id < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -161,7 +161,7 @@ public class AndroidController {
     })
     @PutMapping("/{id}/delivery")
     @OperationRecord(type = OperationRecordLog.OperationType.DELIVERY, resource = OperationRecordLog.OperationResource.ANDROID_VERSION, description = OperationRecordLog.OperationDescription.DELIVERY_ANDROID_VERSION)
-    public ServiceResult delivery(@PathVariable int id) {
+    public ServiceResult<?> delivery(@PathVariable int id) {
         return androidVersionService.delivery(id);
     }
 
@@ -170,7 +170,7 @@ public class AndroidController {
     })
     @PutMapping("/{id}/undelivery")
     @OperationRecord(type = OperationRecordLog.OperationType.UNDELIVERY, resource = OperationRecordLog.OperationResource.ANDROID_VERSION, description = OperationRecordLog.OperationDescription.UNDELIVERY_ANDROID_VERSION)
-    public ServiceResult undelivery(@PathVariable int id) {
+    public ServiceResult<?> undelivery(@PathVariable int id) {
         return androidVersionService.undelivery(id);
     }
 }

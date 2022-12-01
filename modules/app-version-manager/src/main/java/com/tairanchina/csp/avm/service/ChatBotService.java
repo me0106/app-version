@@ -20,7 +20,7 @@ public interface ChatBotService {
      * @param events    事件
      * @return          是否成功
      */
-    ServiceResult createChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events);
+    ServiceResult<?> createChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events);
 
     /**
      * 编辑钉钉机器人信息
@@ -30,21 +30,21 @@ public interface ChatBotService {
      * @param events    事件
      * @return          是否成功
      */
-    ServiceResult editChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events);
+    ServiceResult<?> editChatBot(Integer appId, String webhook, String name, List<ChatBotEventType> events);
 
     /**
      * 删除某个机器人
      * @param appId
      * @return
      */
-    ServiceResult deleteChatBot(Integer appId);
+    ServiceResult<?> deleteChatBot(Integer appId);
 
     /**
      * 根据APPID找到绑定的机器人
      * @param appId
      * @return
      */
-    ServiceResult getByAppId(int appId);
+    ServiceResult<?> getByAppId(int appId);
 
     /**
      * 发送钉钉消息

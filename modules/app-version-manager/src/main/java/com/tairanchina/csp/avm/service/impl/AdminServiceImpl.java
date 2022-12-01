@@ -51,7 +51,7 @@ public class AdminServiceImpl implements AdminService {
     private ChannelMapper channelMapper;
 
     @Override
-    public ServiceResult bindUserAndApp(String userId, int appId) {
+    public ServiceResult<?> bindUserAndApp(String userId, int appId) {
         App app = appMapper.selectById(appId);
         if (app == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;
@@ -61,7 +61,7 @@ public class AdminServiceImpl implements AdminService {
         userAppRel.setAppId(appId);
         userAppRel.setUserId(userId);
         if (userAppRelMapper.selectOne(userAppRel).isPresent()) {
-            return new ServiceResult(
+            return ServiceResult.failed(
                 ServiceResultConstants.REL_EXISTS.getCode(),
                 "绑定用户[" + userId + "]与App[" + appId + "]失败，因为该关系已经存在");
         }
@@ -76,7 +76,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult unbindUserAndApp(String userId, int appId) {
+    public ServiceResult<?> unbindUserAndApp(String userId, int appId) {
         logger.info("解绑用户[{}]与App[{}]", userId, appId);
         int delete = userAppRelMapper.wrapper().eq(UserAppRel::getAppId, appId)
             .eq(UserAppRel::getUserId, userId).delete();
@@ -91,7 +91,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public ServiceResult createApp(String appName, String tenantAppId) {
+    public ServiceResult<?> createApp(String appName, String tenantAppId) {
         if (!appMapper.selectAppForCreate(appName, tenantAppId).isEmpty()) {
             return ServiceResultConstants.TENANT_APP_ID_OR_APP_NAME_EXISTS;
         }
@@ -125,10 +125,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult editApp(int appId, String appName, String tenantAppId) {
+    public ServiceResult<?> editApp(int appId, String appName, String tenantAppId) {
         List<App> apps = appMapper.selectAppUpdate(appName, tenantAppId, appId);
         if (!apps.isEmpty()) {
-            return new ServiceResult(
+            return ServiceResult.failed(
                 ServiceResultConstants.APP_EXISTS.getCode(),
                 "已经有其他应用取名为[" + appName + "]，或AppId为[ " + tenantAppId + " ]，请换一个名称或AppId");
         }
@@ -147,7 +147,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult deleteApp(int appId) {
+    public ServiceResult<?> deleteApp(int appId) {
         App app = appMapper.selectById(appId);
         if (app == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;
@@ -164,7 +164,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult getApp(int appId) {
+    public ServiceResult<?> getApp(int appId) {
         App app = appMapper.selectById(appId);
         if (app == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;
@@ -173,7 +173,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult deleteAppForever(int appId) {
+    public ServiceResult<?> deleteAppForever(int appId) {
         App app = appMapper.selectById(appId);
         if (app == null) {
             return ServiceResultConstants.APP_NOT_EXISTS;
@@ -192,14 +192,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult listApp(int page, int pageSize, Example<App> wrapper) {
+    public ServiceResult<?> listApp(int page, int pageSize, Example<App> wrapper) {
         final Page<App> apps = appMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
         basicService.formatCreatedBy(apps);
         return ServiceResult.ok(apps);
     }
 
     @Override
-    public ServiceResult listAppWithBindInfo(int page, int pageSize, Example<App> wrapper, String userId) {
+    public ServiceResult<?> listAppWithBindInfo(int page, int pageSize, Example<App> wrapper, String userId) {
         final Page<App> apps = appMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
         Page<HashMap<String, Object>> collect = apps.map(mapper -> {
             HashMap<String, Object> map = new HashMap<>();
@@ -219,7 +219,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult listBindApp(String userId) {
+    public ServiceResult<?> listBindApp(String userId) {
         ArrayList<HashMap> hashMaps = userAppRelMapper.listBindApp(userId);
         List<HashMap> collect = hashMaps.stream().map(mapper -> {
             HashMap<String, Object> map = new HashMap<>();
@@ -232,12 +232,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ServiceResult listUser(int page, int pageSize, Example<User> wrapper) {
+    public ServiceResult<?> listUser(int page, int pageSize, Example<User> wrapper) {
         return ServiceResult.ok(userMapper.selectPage(PageRequest.of(page, pageSize), wrapper));
     }
 
     @Override
-    public ServiceResult isAdmin(String userId) {
+    public ServiceResult<?> isAdmin(String userId) {
         User user1 = new User();
         user1.setUserId(userId);
         List<User> users = userMapper.selectList(user1);

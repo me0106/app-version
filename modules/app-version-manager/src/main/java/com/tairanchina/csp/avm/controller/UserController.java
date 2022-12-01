@@ -33,14 +33,14 @@ public class UserController {
 
     @Operation(description = "登录")
     @PostMapping("/login")
-    public ServiceResult login(@RequestBody LoginReq loginReq) {
+    public ServiceResult<?> login(@RequestBody LoginReq loginReq) {
         return userService.login(loginReq.getPhone(), loginReq.getPassword());
     }
 
 
     @Operation(description = "注册")
     @PostMapping("/register")
-    public ServiceResult register(@RequestBody RegisterReq registerReq) {
+    public ServiceResult<?> register(@RequestBody RegisterReq registerReq) {
         if (!registerReq.getPassword().trim().equals(registerReq.getPasswordConfirm().trim())) {
             return ServiceResultConstants.PASSWORD_CONFIRM_ERROR;
         }
@@ -53,7 +53,7 @@ public class UserController {
 
     @Operation(description = "修改密码")
     @PostMapping("/changePassword")
-    public ServiceResult register(@RequestBody ChangePasswordReq changePasswordReq) {
+    public ServiceResult<?> register(@RequestBody ChangePasswordReq changePasswordReq) {
         if (!changePasswordReq.getPassword().trim().equals(changePasswordReq.getPasswordConfirm().trim())) {
             return ServiceResultConstants.PASSWORD_CONFIRM_ERROR;
         }
@@ -72,7 +72,7 @@ public class UserController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/set")
-    public ServiceResult set(@RequestParam(required = false, defaultValue = "") String password,
+    public ServiceResult<?> set(@RequestParam(required = false, defaultValue = "") String password,
                              @RequestParam(required = false, defaultValue = "") String phone) {
         return ServiceResultConstants.SERVICE_NOT_SUPPORT;
     }
@@ -84,7 +84,7 @@ public class UserController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/nick")
-    public ServiceResult change(@RequestParam(required = false, defaultValue = "") String password,
+    public ServiceResult<?> change(@RequestParam(required = false, defaultValue = "") String password,
                                 @RequestParam(required = false, defaultValue = "") String phone,
                                 @RequestParam(required = false, defaultValue = "") String nickName) {
         return ServiceResultConstants.SERVICE_NOT_SUPPORT;
@@ -100,7 +100,7 @@ public class UserController {
     })
     @PutMapping("/update/{nickName}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.USER, description = OperationRecordLog.OperationDescription.UPDATE_USER)
-    public ServiceResult changeNickName(@PathVariable String nickName) {
+    public ServiceResult<?> changeNickName(@PathVariable String nickName) {
         String userId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId();
         return userService.updateUserNickNameByUserId(userId, nickName);
     }

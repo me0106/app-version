@@ -47,7 +47,7 @@ public class BasicServiceImpl implements BasicService {
     }
 
     @Override
-    public ServiceResult checkVersion(Object o) {
+    public ServiceResult<?> checkVersion(Object o) {
         VersionInfo versionInfo = new VersionInfo();
         BeanUtils.copyProperties(o, versionInfo);
         if (versionInfo.getAndroidEnabled() != null && versionInfo.getAndroidEnabled() == 1) {

@@ -14,18 +14,18 @@ public interface AppService {
      * @param userId        用户ID
      * @return              列表
      */
-    ServiceResult getAppListWithUserId(int page, int pageSize, String userId);
+    ServiceResult<?> getAppListWithUserId(int page, int pageSize, String userId);
 
     /**
      * 创建一个应用
      * @param appName   应用名称
      * @return          ServiceResult（有应用ID）
      */
-    ServiceResult createApp(String appName,String tenantAppId);
+    ServiceResult<?> createApp(String appName,String tenantAppId);
 
     /**
      * 获取当前登录用户绑定的应用列表
      * @return              列表
      */
-    ServiceResult getMyApp();
+    ServiceResult<?> getMyApp();
 }

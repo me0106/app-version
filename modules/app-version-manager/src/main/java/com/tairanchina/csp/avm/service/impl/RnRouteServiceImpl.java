@@ -26,7 +26,7 @@ public class RnRouteServiceImpl implements RnRouteService {
     private BasicService basicService;
 
     @Override
-    public ServiceResult create(RnRoute rnRoute) {
+    public ServiceResult<?> create(RnRoute rnRoute) {
         rnRoute.setId(null);
         rnRoute.setCreatedBy(ThreadLocalUtils.USER_THREAD_LOCAL.get().getUserId());
         rnRoute.setAppId(ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
@@ -39,7 +39,7 @@ public class RnRouteServiceImpl implements RnRouteService {
     }
 
     @Override
-    public ServiceResult delete(int id) {
+    public ServiceResult<?> delete(int id) {
         RnRoute rnRoute = rnRouteMapper.selectById(id);
         if (rnRoute == null) {
             return ServiceResultConstants.RN_ROUTE_NOT_EXISTS;
@@ -57,7 +57,7 @@ public class RnRouteServiceImpl implements RnRouteService {
     }
 
     @Override
-    public ServiceResult update(RnRoute rnRoute) {
+    public ServiceResult<?> update(RnRoute rnRoute) {
         if (rnRoute.getId() == null || rnRoute.getId() < 1) {
             return ServiceResultConstants.NEED_PARAMS;
         }
@@ -79,7 +79,7 @@ public class RnRouteServiceImpl implements RnRouteService {
     }
 
     @Override
-    public ServiceResult list(int page, int pageSize, Example<RnRoute> wrapper) {
+    public ServiceResult<?> list(int page, int pageSize, Example<RnRoute> wrapper) {
         final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         wrapper.createCriteria().andEqualTo(RnRoute::getAppId, appId);
         final Page<RnRoute> routePage = rnRouteMapper.selectPage(PageRequest.of(page, pageSize), wrapper);
@@ -88,7 +88,7 @@ public class RnRouteServiceImpl implements RnRouteService {
     }
 
     @Override
-    public ServiceResult find(int id) {
+    public ServiceResult<?> find(int id) {
         RnRoute rnRoute = rnRouteMapper.selectById(id);
         if (rnRoute == null) {
             return ServiceResultConstants.RN_ROUTE_NOT_EXISTS;

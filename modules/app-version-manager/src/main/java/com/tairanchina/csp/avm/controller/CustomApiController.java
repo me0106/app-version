@@ -44,7 +44,7 @@ public class CustomApiController {
         @Parameter(name = "customName", description = "自定义接口名称"),
     })
     @GetMapping
-    public ServiceResult list(@RequestParam(required = false, defaultValue = "1") int page,
+    public ServiceResult<?> list(@RequestParam(required = false, defaultValue = "1") int page,
                               @RequestParam(required = false, defaultValue = "10") int pageSize,
                               @RequestParam(required = false) String osType,
                               @RequestParam(required = false) String customName) {
@@ -73,7 +73,7 @@ public class CustomApiController {
         @Parameter(name = "Authorization", description = "用户登录凭证", in = ParameterIn.HEADER, required = true),
     })
     @GetMapping("/{id}")
-    public ServiceResult findCustomApi(@PathVariable Integer id) {
+    public ServiceResult<?> findCustomApi(@PathVariable Integer id) {
         CustomApi customApi = new CustomApi();
         customApi.setId(id);
         return customApiService.getCustomApiByOne(customApi);
@@ -88,12 +88,12 @@ public class CustomApiController {
     })
     @PostMapping("/add")
     @OperationRecord(type = OperationRecordLog.OperationType.CREATE, resource = OperationRecordLog.OperationResource.CUSTOM_API, description = OperationRecordLog.OperationDescription.CREATE_CUSTOM_API)
-    public ServiceResult addCustomApi(@Valid @RequestBody CustomApiRequestDTO customApiRequestDTO) {
+    public ServiceResult<?> addCustomApi(@Valid @RequestBody CustomApiRequestDTO customApiRequestDTO) {
         if (StringUtils.isBlank(customApiRequestDTO.getCustomKey())) {
             return ServiceResultConstants.NEED_PARAMS;
         }
         //校验版本区间
-        ServiceResult serviceResult = basicService.checkVersion(customApiRequestDTO);
+        ServiceResult<?> serviceResult = basicService.checkVersion(customApiRequestDTO);
         if (serviceResult.getCode() != 200) {
             return serviceResult;
         }
@@ -113,12 +113,12 @@ public class CustomApiController {
     })
     @PutMapping("/update/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.UPDATE, resource = OperationRecordLog.OperationResource.CUSTOM_API, description = OperationRecordLog.OperationDescription.UPDATE_CUSTOM_API)
-    public ServiceResult updateCustomApi(@PathVariable Integer id, @Valid @RequestBody CustomApiRequestDTO customApiRequestDTO) {
+    public ServiceResult<?> updateCustomApi(@PathVariable Integer id, @Valid @RequestBody CustomApiRequestDTO customApiRequestDTO) {
         if (1 > id) {
             return ServiceResult.failed(40001, "id不正确");
         }
         //校验版本区间
-        ServiceResult serviceResult = basicService.checkVersion(customApiRequestDTO);
+        ServiceResult<?> serviceResult = basicService.checkVersion(customApiRequestDTO);
         if (serviceResult.getCode() != 200) {
             return serviceResult;
         }
@@ -144,7 +144,7 @@ public class CustomApiController {
     })
     @DeleteMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE_FOREVER, resource = OperationRecordLog.OperationResource.CUSTOM_API, description = OperationRecordLog.OperationDescription.DELETE_FOREVER_CUSTOM_API)
-    public ServiceResult deleteCustomApiForver(@PathVariable Integer id) {
+    public ServiceResult<?> deleteCustomApiForver(@PathVariable Integer id) {
         return customApiService.deleteCustomApiForver(id);
     }
 
@@ -164,7 +164,7 @@ public class CustomApiController {
     })
     @PutMapping("/{id}")
     @OperationRecord(type = OperationRecordLog.OperationType.DELETE, resource = OperationRecordLog.OperationResource.CUSTOM_API, description = OperationRecordLog.OperationDescription.DELETE_CUSTOM_API)
-    public ServiceResult deleteCustomApi(@PathVariable Integer id) {
+    public ServiceResult<?> deleteCustomApi(@PathVariable Integer id) {
         return customApiService.deleteCustomApi(id);
     }
 
