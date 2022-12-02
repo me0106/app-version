@@ -10,7 +10,7 @@ public class ApkControllerTest extends BaseControllerTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ApkControllerTest.class);
 
-    private String uri = "/apk";
+    private final String uri = "/apk";
 
     private String url = "";
 

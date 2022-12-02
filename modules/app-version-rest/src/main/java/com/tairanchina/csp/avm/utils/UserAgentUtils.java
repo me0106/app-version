@@ -17,13 +17,13 @@ public class UserAgentUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(UserAgentUtils.class);
 
-    private static String android = "Android";
-    private static String iphone = "iPhone";
-    private static String ipad = "iPad";
-    private static String windows = "Windows";
-    private static String noDevice = "未知设备";
+    private static final String android = "Android";
+    private static final String iphone = "iPhone";
+    private static final String ipad = "iPad";
+    private static final String windows = "Windows";
+    private static final String noDevice = "未知设备";
 
-    private static String regex = ";\\s?(\\S*?\\s?\\S*?)\\s?(Build)?/";
+    private static final String regex = ";\\s?(\\S*?\\s?\\S*?)\\s?(Build)?/";
 
 
     //获取用户os信息

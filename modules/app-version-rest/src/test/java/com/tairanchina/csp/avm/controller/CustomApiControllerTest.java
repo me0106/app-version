@@ -6,9 +6,9 @@ import org.slf4j.LoggerFactory;
 
 public class CustomApiControllerTest extends BaseControllerTest {
 
-    private static Logger logger = LoggerFactory.getLogger(CustomApiControllerTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomApiControllerTest.class);
 
-    private static String uri = "/c/";
+    private static final String uri = "/c/";
 
     @Test
     public void hello() throws Exception {

@@ -6,7 +6,7 @@ import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.AndroidVersion;
 import com.tairanchina.csp.avm.entity.OperationRecordLog;
 import com.tairanchina.csp.avm.utils.StringUtilsExt;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import com.tairanchina.csp.avm.wapper.Ordered;
 import com.tairanchina.csp.avm.annotation.OperationRecord;
 import com.tairanchina.csp.avm.service.AndroidVersionService;
 import com.tairanchina.csp.avm.service.BasicService;
@@ -58,7 +58,7 @@ public class AndroidController {
         final Example.Criteria<AndroidVersion> wrapper = example.createCriteria();
         wrapper.andEqualTo(AndroidVersion::getAppId, ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         wrapper.andEqualTo(AndroidVersion::getDelFlag, 0);
-        ExtWrapper.orderByVersion(example, "app_version");
+        Ordered.orderByVersion(example, "app_version");
         if (StringUtils.hasLength(appVersion)) {
             wrapper.andLike(AndroidVersion::getAppVersion, "%" + appVersion + "%");
         }

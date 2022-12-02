@@ -44,11 +44,11 @@ public enum BrowserType {
 
     String browser;
 
-    private BrowserType(String name) {
+    BrowserType(String name) {
         this.name = name();
     }
 
-    private BrowserType(String name, String browser) {
+    BrowserType(String name, String browser) {
         this.name = name;
         this.browser = browser;
     }

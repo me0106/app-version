@@ -14,7 +14,7 @@ import com.tairanchina.csp.avm.mapper.RnRouteMapper;
 import com.tairanchina.csp.avm.service.AppService;
 import com.tairanchina.csp.avm.service.RnService;
 import com.tairanchina.csp.avm.utils.VersionCompareUtils;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import com.tairanchina.csp.avm.wapper.Ordered;
 import io.mybatis.mapper.example.Example;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public class RnServiceImpl implements RnService {
             return ServiceResultConstants.PLATFORM_ERROR;
         }
         wrapper.andEqualTo(RnPackage::getDelFlag, 0);
-        ExtWrapper.orderByVersion(example,"rn_version");
+        Ordered.orderByVersion(example,"rn_version");
         wrapper.andEqualTo(RnPackage::getAppId, appSelected.getId());
         wrapper.andEqualTo(RnPackage::getRnStatus, rnStatus);
         List<RnPackage> rnPackages = rnPackageMapper.selectByExample(example);

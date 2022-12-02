@@ -10,7 +10,7 @@ public class ChannelControllerTest extends BaseControllerTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ChannelControllerTest.class);
 
-    private String uri = "/channel";
+    private final String uri = "/channel";
     private String url = "";
 
     @Test

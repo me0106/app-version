@@ -9,7 +9,7 @@ import io.mybatis.mapper.example.ExampleWrapper;
  * @author hzds
  * @Create 2018-09 : 26 19:44
  */
-public class ExtWrapper {
+public class Ordered {
 
     @SuppressWarnings("rawtypes")
     public static void orderByVersion(ExampleWrapper wrapper, String columns) {

@@ -19,7 +19,7 @@ import com.tairanchina.csp.avm.mapper.ChannelMapper;
 import com.tairanchina.csp.avm.service.AndroidVersionService;
 import com.tairanchina.csp.avm.service.AppService;
 import com.tairanchina.csp.avm.utils.VersionCompareUtils;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import com.tairanchina.csp.avm.wapper.Ordered;
 import io.mybatis.mapper.example.ExampleWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -61,7 +61,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
             .eq(AndroidVersion::getAppId, appSelected.getId())
             .eq(AndroidVersion::getDelFlag, 0)
             .eq(AndroidVersion::getVersionStatus, 1);
-        ExtWrapper.orderByVersion(wrapper, "app_version");
+        Ordered.orderByVersion(wrapper, "app_version");
         List<AndroidVersion> androidVersions = wrapper.list();
         if (androidVersions.isEmpty()) {
             logger.debug("查询不到新版本或者新版本未上架，当前版本为最新");
@@ -151,7 +151,7 @@ public class AndroidVersionServiceImpl implements AndroidVersionService {
         wrapper.eq(AndroidVersion::getAppId, appSelected.getId())
             .eq(AndroidVersion::getDelFlag, 0)
             .eq(AndroidVersion::getVersionStatus, 1);
-        ExtWrapper.orderByVersion(wrapper, "app_version");
+        Ordered.orderByVersion(wrapper, "app_version");
         List<AndroidVersion> androidVersions = wrapper.list();
         logger.debug("查询到的版本：");
         androidVersions.forEach(androidVersion -> logger.debug(androidVersion.getAppVersion()));

@@ -7,6 +7,6 @@ public enum ActionButtonStyle {
     HORIZONTAL,
     VERTICAL;
 
-    private ActionButtonStyle() {
+    ActionButtonStyle() {
     }
 }

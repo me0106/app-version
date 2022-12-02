@@ -14,7 +14,7 @@ public class NetworkUtil {
     /**
      * Logger for this class
      */
-    private static Logger logger = LoggerFactory.getLogger(NetworkUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(NetworkUtil.class);
 
     /**
      * 获取请求主机IP地址,如果通过代理进来，则透过防火墙获取真实IP地址;
@@ -65,7 +65,7 @@ public class NetworkUtil {
         } else if (ip.length() > 15) {
             String[] ips = ip.split(",");
             for (int index = 0; index < ips.length; index++) {
-                String strIp = (String) ips[index];
+                String strIp = ips[index];
                 if (!("unknown".equalsIgnoreCase(strIp))) {
                     ip = strIp;
                     break;

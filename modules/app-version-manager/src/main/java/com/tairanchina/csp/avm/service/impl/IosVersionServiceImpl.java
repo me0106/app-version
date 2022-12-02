@@ -13,7 +13,7 @@ import com.tairanchina.csp.avm.service.ChatBotService;
 import com.tairanchina.csp.avm.service.IosVersionService;
 import com.tairanchina.csp.avm.utils.ThreadLocalUtils;
 import com.tairanchina.csp.avm.utils.VersionCompareUtils;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import com.tairanchina.csp.avm.wapper.Ordered;
 import io.mybatis.mapper.example.Example;
 import io.mybatis.mapper.example.ExampleWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,7 +132,7 @@ public class IosVersionServiceImpl implements IosVersionService {
         final Integer appId = ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId();
         final ExampleWrapper<IosVersion, Integer> exampleWrapper = iosVersionMapper.wrapper().eq(IosVersion::getAppId, appId)
             .eq(IosVersion::getDelFlag, 0);
-        ExtWrapper.orderByVersion(exampleWrapper, "app_version");
+        Ordered.orderByVersion(exampleWrapper, "app_version");
         List<String> collect = exampleWrapper.list().stream().map(IosVersion::getAppVersion).collect(Collectors.toList());
         return ServiceResult.ok(collect);
     }

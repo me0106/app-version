@@ -10,7 +10,7 @@ import com.tairanchina.csp.avm.mapper.IosVersionMapper;
 import com.tairanchina.csp.avm.service.AppService;
 import com.tairanchina.csp.avm.service.IosVersionService;
 import com.tairanchina.csp.avm.utils.VersionCompareUtils;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import com.tairanchina.csp.avm.wapper.Ordered;
 import io.mybatis.mapper.example.Example;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class IosVersionServiceImpl implements IosVersionService {
         wrapper.andEqualTo(IosVersion::getAppId, appSelected.getId());
         wrapper.andEqualTo(IosVersion::getDelFlag, 0);
         wrapper.andEqualTo(IosVersion::getVersionStatus, 1);
-        ExtWrapper.orderByVersion(example, "app_version");
+        Ordered.orderByVersion(example, "app_version");
         List<IosVersion> iosVersions = iosVersionMapper.selectByExample(example);
         if (iosVersions.isEmpty()) {
             logger.debug("查询不到新版本，当前版本为最新");

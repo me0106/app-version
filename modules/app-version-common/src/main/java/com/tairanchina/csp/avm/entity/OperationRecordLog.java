@@ -31,9 +31,9 @@ public class OperationRecordLog extends BasicEntity {
         OPEN("开启");               //Channel
 //        OTHER("其他");
 
-        private String name;
+        private final String name;
 
-        private OperationType(String name) {
+        OperationType(String name) {
             this.name = name;
         }
 
@@ -58,9 +58,9 @@ public class OperationRecordLog extends BasicEntity {
 //        APP_WHITE_LIST_BATCH("白名单组"),
 //        OTHER("其他");
 
-        private String name;
+        private final String name;
 
-        private OperationResource(String name) {
+        OperationResource(String name) {
             this.name = name;
         }
 
@@ -143,9 +143,9 @@ public class OperationRecordLog extends BasicEntity {
 //        DELETE_FOREVER_APP_WHITE_LIST_ONE("永久删除单个白名单"),
 //        DELETE_FOREVER_APP_WHITE_LIST_BATCH("永久删除一组白名单");
 
-        private String description;
+        private final String description;
 
-        private OperationDescription(String description) {
+        OperationDescription(String description) {
             this.description = description;
         }
 

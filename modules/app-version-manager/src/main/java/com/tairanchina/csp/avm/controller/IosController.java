@@ -6,7 +6,7 @@ import com.tairanchina.csp.avm.dto.ServiceResult;
 import com.tairanchina.csp.avm.entity.IosVersion;
 import com.tairanchina.csp.avm.entity.OperationRecordLog;
 import com.tairanchina.csp.avm.utils.StringUtilsExt;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import com.tairanchina.csp.avm.wapper.Ordered;
 import com.tairanchina.csp.avm.annotation.OperationRecord;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.IosVersionService;
@@ -50,7 +50,7 @@ public class IosController {
         final Example.Criteria<IosVersion> wrapper = example.createCriteria();
         wrapper.andEqualTo(IosVersion::getAppId, ThreadLocalUtils.USER_THREAD_LOCAL.get().getAppId());
         wrapper.andEqualTo(IosVersion::getDelFlag, 0);
-        ExtWrapper.orderByVersion(example, "app_version");
+        Ordered.orderByVersion(example, "app_version");
         if (StringUtils.hasLength(appVersion)) {
             wrapper.andLike(IosVersion::getAppVersion, "%" + appVersion + "%");
         }

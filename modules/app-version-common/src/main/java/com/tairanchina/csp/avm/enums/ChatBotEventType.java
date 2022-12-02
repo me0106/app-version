@@ -13,7 +13,7 @@ public enum ChatBotEventType {
     IOS_VERSION_CREATED("创建iOS版本"),
     CUSTOM_API_CREATED("创建自定义接口"),
     ;
-    private String message;
+    private final String message;
 
     ChatBotEventType(String message) {
         this.message = message;

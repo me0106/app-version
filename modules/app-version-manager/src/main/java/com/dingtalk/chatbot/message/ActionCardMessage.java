@@ -16,7 +16,7 @@ public class ActionCardMessage implements Message {
     private String briefText;
     private boolean hideAvatar;
     private ActionButtonStyle actionButtonStyle;
-    private List<ActionCardAction> actions;
+    private final List<ActionCardAction> actions;
 
     public ActionCardMessage() {
         this.actionButtonStyle = ActionButtonStyle.VERTICAL;

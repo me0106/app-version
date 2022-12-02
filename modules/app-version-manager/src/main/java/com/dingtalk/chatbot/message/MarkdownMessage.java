@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class MarkdownMessage implements Message {
     private String title;
-    private List<String> items = new ArrayList();
+    private final List<String> items = new ArrayList();
 
     public MarkdownMessage() {
     }
@@ -68,10 +68,10 @@ public class MarkdownMessage implements Message {
             StringBuffer sb = new StringBuffer();
 
             for(int i = 1; i <= orderItem.size() - 1; ++i) {
-                sb.append(i + ". " + (String)orderItem.get(i - 1) + "\n");
+                sb.append(i + ". " + orderItem.get(i - 1) + "\n");
             }
 
-            sb.append(orderItem.size() + ". " + (String)orderItem.get(orderItem.size() - 1));
+            sb.append(orderItem.size() + ". " + orderItem.get(orderItem.size() - 1));
             return sb.toString();
         }
     }
@@ -83,10 +83,10 @@ public class MarkdownMessage implements Message {
             StringBuffer sb = new StringBuffer();
 
             for(int i = 0; i < unorderItem.size() - 1; ++i) {
-                sb.append("- " + (String)unorderItem.get(i) + "\n");
+                sb.append("- " + unorderItem.get(i) + "\n");
             }
 
-            sb.append("- " + (String)unorderItem.get(unorderItem.size() - 1));
+            sb.append("- " + unorderItem.get(unorderItem.size() - 1));
             return sb.toString();
         }
     }

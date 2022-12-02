@@ -11,7 +11,7 @@ public class AdminControllerTest extends BaseControllerTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminControllerTest.class);
 
-    private String uri = "/admin/";
+    private final String uri = "/admin/";
     private String url = "";
 
     @Test

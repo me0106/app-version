@@ -10,7 +10,7 @@ public class RnPackageControllerTest extends BaseControllerTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RnPackageControllerTest.class);
 
-    private String uri = "/package";
+    private final String uri = "/package";
     private String url = "";
 
     @Test

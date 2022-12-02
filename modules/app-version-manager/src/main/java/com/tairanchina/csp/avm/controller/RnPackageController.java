@@ -9,7 +9,7 @@ import com.tairanchina.csp.avm.entity.RnPackage;
 import com.tairanchina.csp.avm.service.BasicService;
 import com.tairanchina.csp.avm.service.RnPackageService;
 import com.tairanchina.csp.avm.utils.StringUtilsExt;
-import com.tairanchina.csp.avm.wapper.ExtWrapper;
+import com.tairanchina.csp.avm.wapper.Ordered;
 import io.mybatis.mapper.example.Example;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -65,7 +65,7 @@ public class RnPackageController {
         if (rnStatus != null) {
             wrapper.andEqualTo(RnPackage::getRnStatus, rnStatus);
         }
-        ExtWrapper.orderByVersion(example, "rn_version");
+        Ordered.orderByVersion(example, "rn_version");
         return rnPackageService.listSort(page, pageSize, example);
     }
 
